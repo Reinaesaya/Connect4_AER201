@@ -3,7 +3,7 @@
 // Instatiate ultrasonic(trig,echo)
 Ultrasonic ultrasonic(8,9);
 int left_motor = 5;
-int right_motor = 4;
+int right_motor = 3;
 
 long range_array[5] = {100,100,100,100,100};
 
@@ -21,18 +21,19 @@ void loop()
   Serial.println(obj_range);
   
   shift_add(range_array, 5, obj_range);
-  if (check_array(range_array, 5, 30) == 1) {
+  
+  if (check_array(range_array, 5, 40) == 1) {
     analogWrite(left_motor, 0);
     analogWrite(right_motor, 0);
     
     delay(100);
-    turn('l', 2000);
+    turn('l', 500);
   }
   else {
-    analogWrite(right_motor, 64);
-    analogWrite(left_motor, 64);
+    analogWrite(right_motor, 100);
+    analogWrite(left_motor, 100);
   }
-  delay(50);
+  delay(10);
 }
 
 void turn(char direction, int time) {
@@ -42,11 +43,11 @@ void turn(char direction, int time) {
   
   if (direction == 'l') {
     Serial.println("LEFT");
-    analogWrite(right_motor, 64);
+    analogWrite(right_motor, 100);
   }
   else {
     Serial.println("RIGHT");
-    analogWrite(left_motor, 64);
+    analogWrite(left_motor, 100);
   }
   Serial.println("Gothere");
   delay(time);
