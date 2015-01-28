@@ -1,16 +1,28 @@
-#include "Ultrasonic.h"
+/*
+The following code implements differential steering
+for two DC motors connected to a L293D H-bridge circuit.
 
-// Instatiate ultrasonic(trig,echo)
-Ultrasonic ultrasonic(8,9);
-int left_motor = 5;
-int right_motor = 3;
+The system also uses the HC-SR04 Ultrasonic Sensor to prevent
+the robot from crashing into the walls.
+*/
+
+#include "Ultrasonic.h"
+#include "Diff_steer.h"
+
+/* Instantiate ultrasonic(trig,echo)
+*/
+Ultrasonic ultrasonic(7,8);
+
+/* Instantiate DiffSteering(enable, LM_F, LM_B, RM_F, RM_B)
+*/
+
+DiffSteering diffsteering(13,9,10,5,6);
+// Arduino UNO PWM pins are 3,5,6,9,10,11
 
 long range_array[5] = {100,100,100,100,100};
 
 void setup() {
   Serial.begin(9600);
-  pinMode(left_motor, OUTPUT);
-  pinMode(right_motor, OUTPUT);
 }
 
 void loop()
@@ -23,34 +35,12 @@ void loop()
   shift_add(range_array, 5, obj_range);
   
   if (check_array(range_array, 5, 40) == 1) {
-    analogWrite(left_motor, 0);
-    analogWrite(right_motor, 0);
-    
-    delay(100);
-    turn('l', 500);
+    diffsteering.Pivot_L(90);
   }
   else {
-    analogWrite(right_motor, 100);
-    analogWrite(left_motor, 100);
+    diffsteering.Forward(200);
   }
   delay(10);
-}
-
-void turn(char direction, int time) {
-  Serial.println("TURN");
-  analogWrite(left_motor, 0);
-  analogWrite(right_motor, 0);
-  
-  if (direction == 'l') {
-    Serial.println("LEFT");
-    analogWrite(right_motor, 100);
-  }
-  else {
-    Serial.println("RIGHT");
-    analogWrite(left_motor, 100);
-  }
-  Serial.println("Gothere");
-  delay(time);
 }
 
 void shift_add(long* arr, int length, long b) {
