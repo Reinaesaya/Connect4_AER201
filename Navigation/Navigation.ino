@@ -18,6 +18,7 @@ Ultrasonic ultrasonic(7,8);
 
 DiffSteering diffsteering(13,9,10,5,6);
 // Arduino UNO PWM pins are 3,5,6,9,10,11
+// Arduino Mega PWM pins are 2-13, 44-46
 
 long range_array[5] = {100,100,100,100,100};
 
