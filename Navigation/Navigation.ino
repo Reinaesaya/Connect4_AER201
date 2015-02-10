@@ -11,12 +11,12 @@ the robot from crashing into the walls.
 
 /* Instantiate ultrasonic(trig,echo)
 */
-Ultrasonic ultrasonic(7,8);
+Ultrasonic ultrasonic(23,22);
 
 /* Instantiate DiffSteering(enable, LM_F, LM_B, RM_F, RM_B)
 */
 
-DiffSteering diffsteering(13,9,10,5,6);
+DiffSteering diffsteering(13,12,11,10,9);
 // Arduino UNO PWM pins are 3,5,6,9,10,11
 // Arduino Mega PWM pins are 2-13, 44-46
 
