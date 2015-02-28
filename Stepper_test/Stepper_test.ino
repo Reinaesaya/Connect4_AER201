@@ -45,24 +45,24 @@ void loop()
     diffsteering.Stop();
     delay(1000);
     Serial.println("Down");
-    stepper.step(-100);
+    stepper.step(220);
     delay(1000);
-    diffsteering.Forward(120);
+    diffsteering.Forward(200);
     Serial.println("Forward");
-    delay(1000);
+    delay(1200);
     diffsteering.Stop();
     delay(1000);
-    diffsteering.Backward(120);
+    diffsteering.Backward(200);
     Serial.println("Backward");
-    delay(2000);
+    delay(2500);
     diffsteering.Stop();
     Serial.println("Up");
-    stepper.step(100);
+    stepper.step(-220);
     delay(1000);
     long range_array[5] = {100,100,100,100,100}; // Reset
   }
   else {
-    diffsteering.Forward(200);
+    diffsteering.Forward(240);
   }
   delay(10);
 }
