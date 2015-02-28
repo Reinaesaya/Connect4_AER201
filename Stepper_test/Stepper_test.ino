@@ -1,6 +1,6 @@
 #include <Stepper.h>
 
-Stepper stepper = Stepper(48, 8,9);
+Stepper stepper = Stepper(48, 8,7,6,5);
 
 void setup() {
   stepper.setSpeed(20);
