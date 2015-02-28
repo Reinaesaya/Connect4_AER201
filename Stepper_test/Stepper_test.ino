@@ -10,6 +10,9 @@ the robot from crashing into the walls.
 #include "Diff_steer.h"
 #include <Stepper.h>
 
+<<<<<<< HEAD
+Stepper stepper = Stepper(48, 8,7,6,5);
+=======
 /*Instantiate stepper*/
 
 Stepper stepper = Stepper(48, 8,7,6,5);
@@ -26,6 +29,7 @@ DiffSteering diffsteering(13,12,11,10,9);
 // Arduino Mega PWM pins are 2-13, 44-46
 
 long range_array[5] = {100,100,100,100,100};
+>>>>>>> 0183617a78876a46f7b1fedef3ec5ace54c5e001
 
 void setup() {
   Serial.begin(9600);
