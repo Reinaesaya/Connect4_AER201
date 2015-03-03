@@ -36,10 +36,10 @@ void loop()
   shift_add(range_array, 5, obj_range);
   
   if (check_array(range_array, 5, 40) == 1) {
-    diffsteering.Forward(200);
+    diffsteering.Forward(255);
   }
   else {
-    diffsteering.Forward(200);
+    diffsteering.Forward(255);
   }
   delay(10);
 }
