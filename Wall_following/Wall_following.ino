@@ -15,6 +15,7 @@ long range_arr_l[RANGE_ARRAY_LEN];
 DiffSteering diffsteering(13,12,11,10,9);
 
 long loops = 0;
+int turned = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -33,31 +34,49 @@ void loop()
   Serial.println("Left");
   check_array(range_arr_l, RANGE_ARRAY_LEN, 30);
   Serial.println("Front");
-  if (check_array(range_arr_f, RANGE_ARRAY_LEN, 25) == 1) {
+  if (turned)
+  {
+    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 55) != 1)
+    {
+      long obj_range_front = us_f.Ranging(CM);
+      long obj_range_left = us_l.Ranging(CM);
+      shift_add(range_arr_f, RANGE_ARRAY_LEN, obj_range_front);
+      shift_add(range_arr_l, RANGE_ARRAY_LEN, obj_range_left);
+      if (loops % 2 == 0) wall_straight_adjust(range_arr_l, 200);
+      else wall_dist_adjust(range_arr_l, 40, 200);
+      loops++;
+    }
+    diffsteering.Stop();
+    delay(1000);
+    diffsteering.Pivot_L(220);
+    diffsteering.Stop();
+    delay(100000);
+  }
+  else if (check_array(range_arr_f, RANGE_ARRAY_LEN, 25) == 1) {
     diffsteering.Stop();
     diffsteering.Pivot_R(220);
     diffsteering.Stop();
+    turned = 1;
     init_us(us_f, us_l, range_arr_f, range_arr_l);
     loops = 0;
     delay(5000);
   }
   else {
     if (loops % 2 == 0) wall_straight_adjust(range_arr_l, 200);
-    else wall_dist_adjust(range_arr_l, 20, 200);
+    else wall_dist_adjust(range_arr_l, 10, 200);
     loops++;
   }
 }
 
 void init_us(Ultrasonic front, Ultrasonic left, long *afront, long *aleft)
 {
-  for (int i = 0; i <= 10; ++i) {
+  for (int i = 0; i <= (RANGE_ARRAY_LEN*2); ++i) {
     long r_front = front.Ranging(CM);
     long r_left = left.Ranging(CM);
     shift_add(afront, RANGE_ARRAY_LEN, r_front);
     shift_add(aleft, RANGE_ARRAY_LEN, r_left);
     delay(10);
   }
-  Serial.println("Initialized Array");
 }
 
 void wall_straight_adjust(long *arr, int SPD)
