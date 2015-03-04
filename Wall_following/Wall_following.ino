@@ -36,7 +36,7 @@ void loop()
   Serial.println("Front");
   if (turned)
   {
-    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 55) != 1)
+    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 65) != 1)
     {
       long obj_range_front = us_f.Ranging(CM);
       long obj_range_left = us_l.Ranging(CM);
@@ -52,9 +52,9 @@ void loop()
     diffsteering.Stop();
     delay(100000);
   }
-  else if (check_array(range_arr_f, RANGE_ARRAY_LEN, 25) == 1) {
+  else if (check_array(range_arr_f, RANGE_ARRAY_LEN, 30) == 1) {
     diffsteering.Stop();
-    diffsteering.Pivot_R(220);
+    diffsteering.Pivot_R(210);
     diffsteering.Stop();
     turned = 1;
     init_us(us_f, us_l, range_arr_f, range_arr_l);
@@ -63,7 +63,7 @@ void loop()
   }
   else {
     if (loops % 2 == 0) wall_straight_adjust(range_arr_l, 200);
-    else wall_dist_adjust(range_arr_l, 10, 200);
+    else wall_dist_adjust(range_arr_l, 15, 200);
     loops++;
   }
 }

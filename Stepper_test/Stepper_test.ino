@@ -58,12 +58,16 @@ void getBall(DiffSteering wheels, Stepper stepper) {
       delay(1000);
     Serial.println("Forward");
       diffsteering.Forward(255);
-      delay(1500);
+      delay(2000);
       diffsteering.Stop();
       delay(1000);
+    Serial.println("Side");
+      diffsteering.Turn_R(750, 0, 255);
+      diffsteering.Stop();
+      delay(2000);
     Serial.println("Backward");
       diffsteering.Backward(255);
-      delay(1500);
+      delay(2000);
       diffsteering.Stop();
     Serial.println("Up");
       stepper.step(-STEPPER_STEPS);
