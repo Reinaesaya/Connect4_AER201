@@ -1,21 +1,12 @@
-int no_cover_led = 8;
-int cover_led = 9;
-
 void setup() {
   Serial.begin(9600);
-  pinMode(no_cover_led, OUTPUT);
-  pinMode(cover_led,OUTPUT);
 }
 
 void loop() {
-  int sensorValue = analogRead(A0);
-  if (sensorValue > 600) {
-    digitalWrite(no_cover_led, HIGH);
-    digitalWrite(cover_led, LOW);
-  } else {
-    digitalWrite(cover_led, HIGH);
-    digitalWrite(no_cover_led, LOW);
-  }
-  Serial.println(sensorValue);
+  int sensorValue1 = analogRead(A8);
+  int sensorValue2 = analogRead(A9);
+  Serial.print(sensorValue1);
+  Serial.print(" ");
+  Serial.println(sensorValue2);
   delay(1);
 }

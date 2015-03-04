@@ -10,16 +10,16 @@ the robot from crashing into the walls.
 #include "Diff_steer.h"
 #include <Stepper.h>
 
-<<<<<<< HEAD
-Stepper stepper = Stepper(48, 8,7,6,5);
-=======
+#define STEPPER_SPEED 60
+#define STEPPER_STEPS 100
+
 /*Instantiate stepper*/
 
-Stepper stepper = Stepper(48, 8,7,6,5);
+Stepper stepper = Stepper(48,8,7,6,5);
 
 /* Instantiate ultrasonic(trig,echo)
 */
-Ultrasonic ultrasonic(23,22);
+Ultrasonic ultrasonic1(22,23);
 
 /* Instantiate DiffSteering(enable, LM_F, LM_B, RM_F, RM_B)
 */
@@ -28,47 +28,48 @@ DiffSteering diffsteering(13,12,11,10,9);
 // Arduino UNO PWM pins are 3,5,6,9,10,11
 // Arduino Mega PWM pins are 2-13, 44-46
 
-long range_array[5] = {100,100,100,100,100};
->>>>>>> 0183617a78876a46f7b1fedef3ec5ace54c5e001
+long range_array_1[5] = {100,100,100,100,100};
 
 void setup() {
   Serial.begin(9600);
-  stepper.setSpeed(90);
+  stepper.setSpeed(STEPPER_SPEED);
 }
 
 void loop()
 {
-  long obj_range = ultrasonic.Ranging(CM);
+  long obj_range_1 = ultrasonic1.Ranging(CM);
+  shift_add(range_array_1, 5, obj_range_1);
   
-  Serial.print("Object Range: \t");
-  Serial.println(obj_range);
-  
-  shift_add(range_array, 5, obj_range);
-  
-  if (check_array(range_array, 5, 30) == 1) {
-    diffsteering.Stop();
-    delay(1000);
-    Serial.println("Down");
-    stepper.step(220);
-    delay(1000);
-    diffsteering.Forward(200);
-    Serial.println("Forward");
-    delay(1200);
-    diffsteering.Stop();
-    delay(1000);
-    diffsteering.Backward(200);
-    Serial.println("Backward");
-    delay(2500);
-    diffsteering.Stop();
-    Serial.println("Up");
-    stepper.step(-220);
-    delay(1000);
-    long range_array[5] = {100,100,100,100,100}; // Reset
+  if (check_array(range_array_1, 5, 35) == 1) {
+    getBall(diffsteering, stepper);
   }
   else {
     diffsteering.Forward(240);
   }
   delay(10);
+}
+
+void getBall(DiffSteering wheels, Stepper stepper) {
+    Serial.println("Starting Ball Extraction");
+      diffsteering.Stop();
+      delay(1000);
+    Serial.println("Down");
+      stepper.step(STEPPER_STEPS);
+      delay(1000);
+    Serial.println("Forward");
+      diffsteering.Forward(255);
+      delay(1500);
+      diffsteering.Stop();
+      delay(1000);
+    Serial.println("Backward");
+      diffsteering.Backward(255);
+      delay(1500);
+      diffsteering.Stop();
+    Serial.println("Up");
+      stepper.step(-STEPPER_STEPS);
+      delay(1000);
+    Serial.println("Reset");
+      long range_array_1[5] = {100,100,100,100,100}; // Reset
 }
 
 void shift_add(long* arr, int length, long b) {
