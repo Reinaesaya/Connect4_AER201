@@ -39,6 +39,7 @@ void loop()
     Serial.println(column);
     
     long current_dist = us_f.Ranging(CM);
+    Serial.println("current_dist");
     if (column < 4)
     {
       diffsteering.Pivot_L(220);

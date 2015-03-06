@@ -22,7 +22,7 @@ void setup() {
   init_us(us_f, us_l, range_arr_f, range_arr_l);
   check_array(range_arr_f, RANGE_ARRAY_LEN, 30);
   check_array(range_arr_l, RANGE_ARRAY_LEN, 30);
-  delay(10000);
+  delay(5000);
 }
 
 void loop()
@@ -36,7 +36,8 @@ void loop()
   Serial.println("Front");
   if (turned)
   {
-    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 65) != 1)
+    //while (loops < 200 )
+    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 63) != 1)
     {
       long obj_range_front = us_f.Ranging(CM);
       long obj_range_left = us_l.Ranging(CM);
