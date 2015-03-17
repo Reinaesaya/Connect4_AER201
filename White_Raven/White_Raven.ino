@@ -1,215 +1,143 @@
-#include "Diff_steer.h"
 #include "Ultrasonic.h"
-DiffSteering MyWheel(13,9,10,11,12);
-long collab_arrayR[5] = {0,0,0,0,0};
-long collab_arrayL[5] = {0,0,0,0,0};
-long collab_arrayB[5] = {0,0,0,0,0};
-long collab_arrayF[5] = {0,0,0,0,0};
-long collab_arrayPR[5] = {0,0,0,0,0};
-long collab_arrayPL[5] = {0,0,0,0,0};
-long range_array[5] = {100,100,100,100,100};
-byte num_inter = 0;
-byte num_turn = 0;
-void setup(){
-  Serial.begin(9600);
-  while (millis() <2000){
-  int Fsensor = analogRead(15);
-  int Rsensor = analogRead(14);
-  int Lsensor = analogRead(13);
-  int Bsensor = analogRead(12);
-  int PRsensor = analogRead(9);
-  int PLsensor = analogRead(8);  
-  shift_add(collab_arrayR, 5, Rsensor);    //Right has a white range
-  shift_add(collab_arrayL, 5, Lsensor);    //left has a white range 
-  shift_add(collab_arrayB, 5, Bsensor);    // back has a black range
-  shift_add(collab_arrayF, 5, Fsensor);    //front has a black range
-  shift_add(collab_arrayPR, 5, PRsensor);   
-  shift_add(collab_arrayPL, 5, PLsensor);
-  }
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayR[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-  Serial.println(' ');
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayL[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-    Serial.println(' ');
+#include "Diff_steer.h"
 
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayF[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-  Serial.println(' ');
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayB[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-  Serial.println(' ');
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayPR[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-  Serial.println(' ');
-  for (int i = 0; i < 5; i++){
-    Serial.print(collab_arrayPL[i]);
-    Serial.print(' ');
-    delay(100);
-  }
-  Serial.println(' ');
+#define FRONT_TRIG 22
+#define FRONT_ECHO 23
+#define LEFT_TRIG 44
+#define LEFT_ECHO 45
+#define RANGE_ARRAY_LEN 6
+
+Ultrasonic us_f(FRONT_TRIG,FRONT_ECHO);
+Ultrasonic us_l(LEFT_TRIG,LEFT_ECHO);
+long range_arr_f[RANGE_ARRAY_LEN];
+long range_arr_l[RANGE_ARRAY_LEN];
+
+DiffSteering diffsteering(13,12,11,10,9);
+
+long loops = 0;
+int turned = 0;
+
+void setup() {
+  Serial.begin(9600);
+  init_us(us_f, us_l, range_arr_f, range_arr_l);
+  check_array(range_arr_f, RANGE_ARRAY_LEN, 30);
+  check_array(range_arr_l, RANGE_ARRAY_LEN, 30);
+  delay(5000);
 }
-void loop(){
-  int Fsensor = analogRead(A15);
-  int Rsensor = analogRead(A14);
-  int Lsensor = analogRead(A13);
-  int Bsensor = analogRead(A12);
-  int PRsensor = analogRead(A9);
-  int PLsensor = analogRead(A8);  
-  int MaxR = maximum(collab_arrayR, 5);
-  int MaxL = maximum(collab_arrayL, 5);
-  int MinF = minimum(collab_arrayF, 5);
-  int MinB = minimum(collab_arrayB, 5);
-  int MaxPR = maximum(collab_arrayPR, 5);
-  int MaxPL = maximum(collab_arrayPL, 5);
-  Serial.println(' ');
-  Serial.print(Rsensor);
-  Serial.print(' ');
-  Serial.print(Lsensor);
-  Serial.print(' ');
-  Serial.print(Fsensor);
-  Serial.print(' ');
-  Serial.print(Bsensor); 
-  Serial.print(' ');
-  Serial.print(PRsensor);
-  Serial.print(' ');
-  Serial.print(PLsensor);
-  Serial.println("Compare");
-  Serial.print(MaxR);
-  Serial.print(' ');
-  Serial.print(MaxL);
-  Serial.print(' ');
-  Serial.print(MinF);
-  Serial.print(' ');
-  Serial.print(MinB);
-  Serial.print(' ');
-  Serial.print(MaxPR);
-  Serial.print(' ');
-  Serial.println(MaxPL);
-  if (Lsensor > (MaxL + 100) && Rsensor < (MaxR + 100))
+
+void loop()
+{
+  long obj_range_front = us_f.Ranging(CM);
+  long obj_range_left = us_l.Ranging(CM);
+  shift_add(range_arr_f, RANGE_ARRAY_LEN, obj_range_front);
+  shift_add(range_arr_l, RANGE_ARRAY_LEN, obj_range_left);
+  Serial.println("Left");
+  check_array(range_arr_l, RANGE_ARRAY_LEN, 30);
+  Serial.println("Front");
+  if (turned)
   {
-      MyWheel.Turn_L(10);
-      Serial.println("1");
-  }
-  else if (Rsensor > (MaxR +100) && Lsensor < (MaxL + 100))
-  {
-    MyWheel.Turn_R(10);
-    Serial.println("2");
-  }
-  else if (PRsensor > (MaxPR+100) && PLsensor > (MaxPL +100))
-    {  // @the intersection
-      byte interval = 150;
-      num_inter+= 1;
-      MyWheel.Stop();
-      byte DIRECT = direct_det(num_turn, num_inter);
-      while(DIRECT == 1)
-      {  //LEFT TURN
-        Fsensor = analogRead(A15);
-        Serial.println("4");
-        MyWheel.Pivot_L(90);
-        Serial.println(Fsensor);
-        unsigned long prevMillis = millis();
-        unsigned long currMillis = millis();
-        while(currMillis - prevMillis < interval)
-        {  
-          Fsensor = analogRead(A15);
-          Serial.println("is waiting 1...");
-          MyWheel.Stop();
-          currMillis = millis();
-          Serial.println(currMillis);
-        }
-        Serial.println(Fsensor);
-        while( Fsensor < (MinF - 90))
-        {
-          Fsensor = analogRead(A15);
-          prevMillis = currMillis;
-          Serial.println(Fsensor);
-          Serial.println("is in the loop");
-          MyWheel.Pivot_L(30); 
-          /*while(currMillis - prevMillis < interval)
-            {  
-              Fsensor = analogRead(A15);
-              Serial.println("is waiting 2...");
-              Serial.println(Fsensor);
-              MyWheel.Stop();
-              currMillis = millis();
-            }    */   
-        }
-        num_turn += 1;
-        break;
-      }
-      while (DIRECT == 2)
-      {  //RIGHT TURN
-        Serial.println("4");
-        MyWheel.Pivot_R(90);
-        MyWheel.Stop();
-        while( Fsensor < (MinF -90))
-        {
-          Serial.println("is in the loop");
-          MyWheel.Pivot_R(20);
-        }
-        num_turn += 1;
-        break;
-      }
-      while (DIRECT == 0)
-      {
-        MyWheel.Forward(200);
-        Serial.println("8");
-        break;
-        
-      }
+    //while (loops < 200 )
+    while (check_array(range_arr_f, RANGE_ARRAY_LEN, 63) != 1)
+    {
+      long obj_range_front = us_f.Ranging(CM);
+      long obj_range_left = us_l.Ranging(CM);
+      shift_add(range_arr_f, RANGE_ARRAY_LEN, obj_range_front);
+      shift_add(range_arr_l, RANGE_ARRAY_LEN, obj_range_left);
+      if (loops % 2 == 0) wall_straight_adjust(range_arr_l, 200);
+      else wall_dist_adjust(range_arr_l, 40, 200);
+      loops++;
     }
-  else 
-  {
-    MyWheel.Forward(200);
-    Serial.println("3");
+    diffsteering.Stop();
+    delay(1000);
+    diffsteering.Pivot_L(220);
+    diffsteering.Stop();
+    delay(100000);
+  }
+  else if (check_array(range_arr_f, RANGE_ARRAY_LEN, 30) == 1) {
+    diffsteering.Stop();
+    diffsteering.Pivot_R(210);
+    diffsteering.Stop();
+    turned = 1;
+    init_us(us_f, us_l, range_arr_f, range_arr_l);
+    loops = 0;
+    delay(5000);
+  }
+  else {
+    if (loops % 2 == 0) wall_straight_adjust(range_arr_l, 200);
+    else wall_dist_adjust(range_arr_l, 15, 200);
+    loops++;
   }
 }
-int maximum(long* arr, int length){
-  int maxval = arr[0];
-  for (int i = 0; i != length; i++){
-    if (arr[i] > maxval){
-      maxval = arr[i];}
+
+void init_us(Ultrasonic front, Ultrasonic left, long *afront, long *aleft)
+{
+  for (int i = 0; i <= (RANGE_ARRAY_LEN*2); ++i) {
+    long r_front = front.Ranging(CM);
+    long r_left = left.Ranging(CM);
+    shift_add(afront, RANGE_ARRAY_LEN, r_front);
+    shift_add(aleft, RANGE_ARRAY_LEN, r_left);
+    delay(10);
   }
- return maxval;
-}  
-void shift_add(long* arr, int length, long b){
-  for (int i = 0; i != length; i++) {
+}
+
+void wall_straight_adjust(long *arr, int SPD)
+{
+  int adjust = 0;
+  int mid = ((RANGE_ARRAY_LEN+1)/2);
+  for (int i = mid; i < RANGE_ARRAY_LEN; ++i)
+  {
+    for (int j = 0; j < mid; ++j)
+    {
+      if (arr[i] < arr[j]) --adjust;
+      else if (arr[i] > arr[j]) ++adjust;
+      else continue;
+    }
+  }
+  Serial.print("Adjust Value: ");
+  Serial.println(adjust);
+  int thresh = (RANGE_ARRAY_LEN - (RANGE_ARRAY_LEN/2))*(RANGE_ARRAY_LEN/2) - (RANGE_ARRAY_LEN/2 + 1);
+  if (adjust < (thresh*(-1)))    diffsteering.Turn_R(20, 0,150);
+  else if (adjust > thresh)      diffsteering.Turn_L(20, 0,150);
+  else {                         diffsteering.Forward(SPD);
+                                 delay(10); }
+}
+
+int wall_dist_adjust(long *arr, long targ, int SPD)
+{
+  int adjust = 0;
+  for (int i = 0; i < RANGE_ARRAY_LEN; ++i)
+  {
+    if (arr[i] < targ) --adjust;
+    else if (arr[i] > targ) ++adjust;
+    else continue;
+  }
+  Serial.print("Adjust Value: ");
+  Serial.println(adjust);
+  int thresh = RANGE_ARRAY_LEN - 2;
+  if (adjust < (thresh*(-1)))    diffsteering.Turn_R(20, 100,150);
+  else if (adjust > thresh)      diffsteering.Turn_L(20, 100,150);
+  else {                         diffsteering.Forward(SPD);
+                                 delay(10); }
+}
+
+void shift_add(long* arr, int length, long b) {
+  for (int i = 0; i < length; i++) {
     *(arr + i) = *(arr + i + 1);
   }
   arr[length-1] = b;
 }
-int minimum(long* arr, int length){
-  int minval = arr[0];
-  for (int i = 0; i != length; i++){
-    if (arr[i] < minval){
-      minval = arr[i];}
-  }
- return minval;
-}
 
-byte direct_det(byte num_turn, byte num_inter){
-  byte direct = 0;
-  if (num_turn == 0)
-  {
-    direct = 1;
-  }
-  return direct;
-}
+int check_array(long* arr, int length, long thresh) {
   
-
+  int ret = 1;
+  
+  for (int i = 0; i != length; i++) {
+    Serial.print(arr[i]);
+    Serial.print(" ");
+    if (arr[i] >= thresh) {
+      ret = 0;
+    }
+  }
+  Serial.print("\n");
+  return ret;
+}
