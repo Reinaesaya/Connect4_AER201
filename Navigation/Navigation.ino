@@ -36,7 +36,7 @@ void loop()
   shift_add(range_array, 5, obj_range);
   
   if (check_array(range_array, 5, 40) == 1) {
-    diffsteering.Turn_R(90);
+    diffsteering.Pivot_R(90);
   }
   else {
     diffsteering.Forward(255);

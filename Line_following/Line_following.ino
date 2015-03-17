@@ -9,9 +9,20 @@ const int MaxPR = 46;
 const int MaxPL = 47;
 byte num_inter = 0;
 byte num_turn = 0;
+const int pin_A = 1;
+const int pin_B = 2;
+unsigned char encoder_A;
+unsigned char encoder_B;
+unsigned char encoder_A_prev;
+volatile int lastEncoded = 0;
+volatile long encoderValue = 0;
 void setup(){
   Serial.begin(9600);
   delay (1000);
+  pinMode(9, OUTPUT);
+  pinMode(pin_A, INPUT);
+  pinMode(pin_B, INPUT);
+  attachInterrupt(2,doEncoder, CHANGE);
   Serial.println("start...");
 }
 void loop(){
@@ -152,14 +163,7 @@ void loop(){
     Serial.println("6");
   }
 }
-int maximum(long* arr, int length){
-  int maxval = arr[0];
-  for (int i = 0; i != length; i++){
-    if (arr[i] > maxval){
-      maxval = arr[i];}
-  }
- return maxval;
-}  
+
 void shift_add(long* arr, int length, long b){
   for (int i = 0; i != length; i++) {
     *(arr + i) = *(arr + i + 1);
