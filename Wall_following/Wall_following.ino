@@ -102,7 +102,7 @@ void wall_straight_adjust(long *arr, int SPD)
                                  delay(10); }
 }
 
-int wall_dist_adjust(long *arr, long targ, int SPD)
+void wall_dist_adjust(long *arr, long targ, int SPD)
 {
   int adjust = 0;
   for (int i = 0; i < RANGE_ARRAY_LEN; ++i)

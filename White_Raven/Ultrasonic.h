@@ -1,9 +1,9 @@
 /*
-  Ultrasonic.h - Library for HR-SC04 Ultrasonic Ranging Module.
-  Created by ITead studio. Alex, Apr 20, 2010.
-  iteadstudio.com
+  Class implementation of module adapted from:
+    Ultrasonic.h - Library for HR-SC04 Ultrasonic Ranging Module.
+    Created by ITead studio. Alex, Apr 20, 2010.
+    iteadstudio.com
 */
-
 
 #ifndef Ultrasonic_h
 #define Ultrasonic_h
@@ -20,10 +20,10 @@ class Ultrasonic
     long Timing();
     long Ranging(int sys);
 
-    private:
+  private:
     int Trig_pin;
     int Echo_pin;
-    long  duration,distacne_cm,distance_inc;
+    long duration,distance_cm,distance_inc;
     
 };
 

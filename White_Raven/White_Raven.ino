@@ -1,9 +1,19 @@
 #include "Wheels.h"
 #include "Encoder.h"
+#include "Ultrasonic.h"
 #include "constants.h"
 
+// Instantiate Encoder and Wheels
 Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
 Wheels wheels(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
+
+// Instantiate Ultrasonic uses
+Ultrasonic front_ultra(FRONT_TRIG,FRONT_ECHO);
+Ultrasonic left_ultra(LEFT_TRIG,LEFT_ECHO);
+Ultrasonice right_ultra(RIGHT_TRIG,RIGHT_ECHO);
+long range_arr_f[RANGE_ARRAY_LEN];
+long range_arr_l[RANGE_ARRAY_LEN];
+long range_arr_r[RANGE_ARRAY_LEN];
 
 int go = 48;
 

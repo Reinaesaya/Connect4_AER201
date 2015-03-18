@@ -1,10 +1,3 @@
-/*
-  Ultrasonic.cpp - Library for HC-SR04 Ultrasonic Ranging Module.library
-
-  Created by ITead studio. Apr 20, 2010.
-  iteadstudio.com
-*/
-
 #include "Arduino.h"
 #include "Ultrasonic.h"
 
@@ -30,10 +23,10 @@ long Ultrasonic::Timing()
 long Ultrasonic::Ranging(int sys)
 {
   Timing();
-  distacne_cm = duration /29 / 2 ;
+  distance_cm = duration / 29 / 2 ;
   distance_inc = duration / 74 / 2;
   if (sys)
-  return distacne_cm;
+  return distance_cm;
   else
   return distance_inc;
 }
