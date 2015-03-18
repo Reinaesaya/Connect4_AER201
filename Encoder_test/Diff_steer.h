@@ -1,14 +1,17 @@
 #ifndef DIFF_STEER_H
 #define DIFF_STEER_H
 
+#include "Encoder.h"
+
 class DiffSteering
 {
   public:
-    DiffSteering(int EN, int LM_F, int LM_B, int RM_F, int RM_B);
+    DiffSteering(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder E);
+    Encoder encoder;
     void Forward(int SPD);
     void Backward(int SPD);
-    void Pivot_L(int angle);
-    void Pivot_R(int angle);
+    void Pivot_L(float angle);
+    void Pivot_R(float angle);
     void Turn_L(int millisec, int inner, int outer);
     void Turn_R(int millisec, int inner, int outer);
     void Stop();

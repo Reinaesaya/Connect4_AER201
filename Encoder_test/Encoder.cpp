@@ -1,5 +1,6 @@
 #include "Encoder.h"
 #include "Arduino.h"
+#include "constants.h"
 
 Encoder::Encoder(int LPinA, int LPinB, int RPinA, int RPinB) :
   left_pin_a (LPinA), left_pin_b (LPinB), right_pin_a (RPinA), right_pin_b (RPinB)
@@ -13,6 +14,7 @@ Encoder::Encoder(int LPinA, int LPinB, int RPinA, int RPinB) :
   digitalWrite(right_pin_a, HIGH);
   digitalWrite(right_pin_b, HIGH);
   reset();
+  Serial.println("Encoder initialized");
 }
 
 void Encoder::update_L_A()
@@ -45,9 +47,8 @@ signed long int Encoder::getPosRight() { return right_pos; }
 
 float Encoder::getPivotAngle()
 {
-  // 90 degrees is 20000 on each side
   // positive turn clockwise, negative turn counterclockwise
-  float angle = (left_pos + (-1*right_pos)) * 90 / 38000;
+  float angle = (left_pos + (-1*right_pos)) * 90 / TICKS_PER_90_DEG;
   return angle;
 }
 
@@ -59,5 +60,5 @@ void Encoder::reset()
   L_B_set = false;
   R_A_set = false;
   R_B_set = false;
+  Serial.println("Encoder Reset");
 }
-

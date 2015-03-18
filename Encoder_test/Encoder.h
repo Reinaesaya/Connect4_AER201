@@ -1,10 +1,8 @@
 /* Encoder Implementation for differential steering
-
 Adapted from:
 Interrupt Example: Class Wrapper, by mikkoh [01/2010]
 Interrupt Example: Tighten up the ISR's
 http://playground.arduino.cc/Main/RotaryEncoders
-
 */
 
 #ifndef ENCODER_H
