@@ -16,10 +16,10 @@
 #define LEFT_WHEEL_B 11
 #define RIGHT_WHEEL_F 10
 #define RIGHT_WHEEL_B 9
-#define MaxR 650
-#define MaxL 610
+#define MaxR 750
+#define MaxL 800
 #define MaxPR 46
-#define MacPL 47
+#define MaxPL 47
 
 #define TICKS_PER_90_DEG 82050
 

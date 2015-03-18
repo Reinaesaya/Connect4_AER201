@@ -44,7 +44,7 @@ void loop()
     getBall(diffsteering, stepper);
   }
   else {
-    diffsteering.Forward(240);
+    diffsteering.Forward(90);
   }
   delay(10);
 }
@@ -57,16 +57,16 @@ void getBall(DiffSteering wheels, Stepper stepper) {
       stepper.step(STEPPER_STEPS);
       delay(1000);
     Serial.println("Forward");
-      diffsteering.Forward(245);
+      diffsteering.Forward(90);
       delay(2000);
       diffsteering.Stop();
       delay(1000);
     Serial.println("Side");
-      diffsteering.Turn_R(750, 0, 255);
+      diffsteering.Turn_R(750, 0, 90);
       diffsteering.Stop();
       delay(2000);
     Serial.println("Backward");
-      diffsteering.Backward(255);
+      diffsteering.Backward(90);
       delay(2000);
       diffsteering.Stop();
     Serial.println("Up");

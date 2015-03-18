@@ -1,12 +1,10 @@
 #include "Diff_steer.h"
-#include "Ultrasonic.h"
-DiffSteering MyWheel(13,12,11,10,9);
-const int MaxR = 650;
-const int MaxL = 610;
-const int MinF = 950;
-const int MinB = 950;
-const int MaxPR = 46;
-const int MaxPL = 47;
+#include "Encoder.h"
+#include "constants.h"
+
+Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
+DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
+
 int x_val;
 int y_val;
 int mode;
@@ -15,15 +13,16 @@ byte num_turn = 0;
 
 void setup(){
   Serial.begin(9600);
-  Serial.println("input x coordinate: ");
-  while (Serial.available() > 0)
+Serial.println("input x coordinate: ");
+  while (Serial.available() <= 0)
   {
-    x_val = Serial.read() -48;
+    continue;
   }
+  x_val = Serial.read() -48;
   Serial.println("input y coordinate: ");
   while (Serial.available() <= 0)
   {
-    y_val = Serial.read() - 48;
+    continue;
   }
   y_val = Serial.read() - 48;
   Serial.print("going to: [");
@@ -31,13 +30,11 @@ void setup(){
   Serial.print(" , ");
   Serial.print(y_val);
   Serial.println(" ]");
-  Serial.println("choose operating mode: ");
-  while (Serial.available() <= 0)
-  {
-    continue;
-  }
-  mode = Serial.read() -48;
-  Serial.println("start...")
+  attachInterrupt(L_ENC_PINA_INT, doEncoder_L_A, CHANGE);
+  attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
+  attachInterrupt(R_ENC_PINA_INT, doEncoder_R_A, CHANGE);
+  attachInterrupt(R_ENC_PINB_INT, doEncoder_R_B, CHANGE);
+  Serial.println("start...");
 }
 
 
@@ -66,10 +63,6 @@ void loop(){
   Serial.print(MaxR);
   Serial.print(' ');
   Serial.print(MaxL);
-  Serial.print(' ');
-  Serial.print(MinF);
-  Serial.print(' ');
-  Serial.print(MinB);
   Serial.print(' ');
   Serial.print(MaxPR);
   Serial.print(' ');
@@ -117,54 +110,14 @@ void loop(){
       Serial.println(num_turn);
       
       //Determine the direction
-      byte DIRECT;
-      switch(mode)
-      {
-        case 1:
-          DIRECT = square(num_inter, num_turn);
-          break;
-        case 2:
-          DIRECT = backup(num_inter, num_turn);
-          break;
-        case 3:
-          DIRECT = input_coor(num_inter, num_turn);
-          break;
-        case 4:
-          DIRECT = hopper(num_inter, num_turn);
-          break;
-      }
+      byte DIRECT= input_coor(num_inter, num_turn);
       
       //start turning...
       while(DIRECT == 1)
       {  //LEFT TURN
         num_inter = 0;
-        Fsensor = analogRead(A15);
         Serial.println("3");
         MyWheel.Pivot_L(90);
-        Serial.println(Fsensor);
-        unsigned long prevMillis = millis();
-        unsigned long currMillis = millis();
-        while(currMillis - prevMillis < interval)
-        {  
-          Fsensor = analogRead(A15);
-          Serial.println("is waiting 1...");
-          MyWheel.Pivot_L(20);
-          currMillis = millis();
-          Serial.println(currMillis);
-        }
-        Serial.println(Fsensor);
-        int count = 0;
-        while(count < 9 && ((Fsensor < MinF - 100)||(Bsensor < MinB - 100)))
-        {
-          count += 1;
-          Fsensor = analogRead(A15);
-          Bsensor = analogRead(A12);
-          prevMillis = currMillis;
-          Serial.println(Fsensor);
-          Serial.print("looped");
-          Serial.println(count);  
-          MyWheel.Pivot_L(25); 
-        }
         num_turn += 1;
         MyWheel.Stop();
         break;
@@ -172,33 +125,8 @@ void loop(){
       while (DIRECT == 2)
       {  //LEFT RIGHT
           num_inter = 0;
-          Fsensor = analogRead(A15);
           Serial.println("4");
           MyWheel.Pivot_R(90);
-          Serial.println(Fsensor);
-          unsigned long prevMillis = millis();
-          unsigned long currMillis = millis();
-          while(currMillis - prevMillis < interval)
-          {  
-              Fsensor = analogRead(A15);
-              Serial.println("is waiting 1...");
-              MyWheel.Pivot_R(20);
-              currMillis = millis();
-              Serial.println(currMillis);
-          }
-          Serial.println(Fsensor);
-          int count = 0;
-          while( count < 9 && ((Fsensor < MinF - 100)||(Bsensor < MinB -100)))
-          {
-              count += 1;
-              Fsensor = analogRead(A15);
-              Bsensor = analogRead(A12);
-              prevMillis = currMillis;
-              Serial.println(Fsensor);
-              Serial.print("looped");
-              Serial.print(count);
-              MyWheel.Pivot_R(25); 
-          }
           num_turn += 1;
           break;
       }
@@ -217,6 +145,13 @@ void loop(){
     Serial.println("6");
   }
 }
+
+void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
+void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
+void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
+void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
+
+
 void shift_add(long* arr, int length, long b){
   for (int i = 0; i != length; i++) {
     *(arr + i) = *(arr + i + 1);
@@ -224,29 +159,9 @@ void shift_add(long* arr, int length, long b){
   arr[length-1] = b;
 }
 
-byte square(byte num_inter, byte num_turn){
-  byte direct = 0;
-  if (num_inter % 2 == 0 && num_inter != 0)
-  {
-    direct = 1;
-  } 
-  return direct;
-}
-
-
+//byte direct_det(byte num_inter, byte num_turn, byte num_hopper){
+  //byte direct = 0;
   
-byte hopper(byte num_inter, byte num_turn){
-  byte direct = 0;
-  if (num_inter == 1 && num_turn == 0  && num_inter != 0)
-  {
-    direct = 1;
-  }
-  else if(num_inter = 3 && num_turn == 1  && num_inter != 0)
-  {
-    direct = 1;
-  }
-  return direct;
-}
 
 byte input_coor(byte num_inter, byte num_turn){
   byte direct = 0;
@@ -270,7 +185,7 @@ byte input_coor(byte num_inter, byte num_turn){
   return direct;
 }
 
-  
+ 
 int check_array(long* arr, int length, long thresh) {
   
   int ret = 1;
