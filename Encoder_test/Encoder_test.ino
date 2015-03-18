@@ -25,7 +25,7 @@ void loop(){
   }
   if (go != 48) {
     encoder.reset();
-    diffsteering.Pivot_R(180);
+    diffsteering.Pivot_L(180);
     diffsteering.Stop();
     delay(1000);
     encoder.reset();
