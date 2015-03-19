@@ -12,7 +12,7 @@
 #define L_ENC_PINA_INT 4
 #define L_ENC_PINB_INT 5
 
-#define TICKS_PER_90_DEG 80000 // This needs to be changed
+#define TICKS_PER_90_DEG 82050
 
 // Wheels
 #define WHEEL_ENABLE 13

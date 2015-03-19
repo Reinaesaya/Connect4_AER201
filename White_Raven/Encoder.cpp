@@ -13,7 +13,7 @@ Encoder::Encoder(int LPinA, int LPinB, int RPinA, int RPinB) :
   digitalWrite(left_pin_b, HIGH);
   digitalWrite(right_pin_a, HIGH);
   digitalWrite(right_pin_b, HIGH);
-  reset();
+  this->reset();
   Serial.println("Encoder initialized");
 }
 

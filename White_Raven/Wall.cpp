@@ -1,20 +1,18 @@
 #include "Wall.h"
-#include "Ultrasonic.h"
-#include "Wheels.h"
 #include "Arduino.h"
 #include "constants.h"
 
-void initialize_ultrasonic(Ultrasonic US, long *array)
+void initialize_ultrasonic(Ultrasonic& US, long *array)
 // Initialize ultrasonic sensor at current position (fills range array)
 {
   for (int i=0; i<=(RANGE_ARRAY_LEN*2); ++i) {
     long r_US = US.Ranging(CM);
-    shift_add(array, RANGE_ARRAY_LEN, r_US);
+    shift_add(array, r_US);
     delay(10);
   }
 }
 
-void wall_straight_adjust(long *array, int SPD)
+void wall_straight_adjust(long *arr, int SPD, Wheels& wheels)
 /* Performs one iteration of adjustment for wall following.
    Follows the wall at any arbitrary distance but maintains a straight line.
 */
@@ -33,13 +31,13 @@ void wall_straight_adjust(long *array, int SPD)
   Serial.print("Straight Adjust Value: ");
   Serial.println(adjust);
   int thresh = (RANGE_ARRAY_LEN/2)*(RANGE_ARRAY_LEN/2) - (RANGE_ARRAY_LEN/2 + 1);
-  if (adjust < (thresh*(-1)))    diffsteering.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
-  else if (adjust > thresh)      diffsteering.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
-  else {                         diffsteering.Forward(SPD);
+  if (adjust < (thresh*(-1)))    wheels.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
+  else if (adjust > thresh)      wheels.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
+  else {                         wheels.Forward(SPD);
                                  delay(10); }
 }
 
-void wall_dist_adjust(long *arr, long targ, int SPD)
+void wall_dist_adjust(long *arr, long targ, int SPD, Wheels& wheels)
 /* Performs one iteration of adjustment for wall following.
    Follows the wall at a specific distance.
 */
@@ -54,9 +52,9 @@ void wall_dist_adjust(long *arr, long targ, int SPD)
   Serial.print("Distance Adjust Value: ");
   Serial.println(adjust);
   int thresh = RANGE_ARRAY_LEN - 2;
-  if (adjust < (thresh*(-1)))    diffsteering.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
-  else if (adjust > thresh)      diffsteering.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
-  else {                         diffsteering.Forward(SPD);
+  if (adjust < (thresh*(-1)))    wheels.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
+  else if (adjust > thresh)      wheels.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
+  else {                         wheels.Forward(SPD);
                                  delay(10); }
 }
 

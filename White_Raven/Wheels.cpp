@@ -7,7 +7,7 @@ L293D H-bridge design.
 #include "Wheels.h"
 #include "Encoder.h"
 
-Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder E) :
+Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
   enable_pin (EN), left_motor_f (LM_F), left_motor_b (LM_B), right_motor_f (RM_F), right_motor_b (RM_B), encoder (E)
 {
    pinMode(enable_pin,OUTPUT);
@@ -27,6 +27,16 @@ void Wheels::Forward(int SPD)
   digitalWrite(enable_pin, HIGH);
 }
 
+void Wheels::Forward(int SPD, signed long int ticks)
+{
+  interrupts();
+  encoder.reset();
+  while ((encoder.getPosLeft() + encoder.getPosRight())/2 <= ticks)
+  { this->Forward(SPD);  }
+  this->Stop();
+  noInterrupts();
+}
+
 void Wheels::Backward(int SPD)
 {
   analogWrite(left_motor_f, 0);
@@ -36,9 +46,20 @@ void Wheels::Backward(int SPD)
   digitalWrite(enable_pin, HIGH);
 }
 
+void Wheels::Backward(int SPD, signed long int ticks)
+{
+  interrupts();
+  encoder.reset();
+  while (((-1)*(encoder.getPosLeft() + encoder.getPosRight())/2) <= ticks)
+  { this->Backward(SPD);  }
+  this->Stop();
+  noInterrupts();
+}
+
 void Wheels::Pivot_L(float angle)
 {
   Serial.println("Pivot Left");
+  interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() > ((-1)*angle))
   {
@@ -50,12 +71,13 @@ void Wheels::Pivot_L(float angle)
     delay(1);
   }
   this->Stop();
-  digitalWrite(enable_pin, HIGH);
+  noInterrupts();
 }
 
 void Wheels::Pivot_R(float angle)
 {
   Serial.println("Pivot Right");
+  interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() < angle)
   {
@@ -67,7 +89,7 @@ void Wheels::Pivot_R(float angle)
     delay(1);
   }
   this->Stop();
-  digitalWrite(enable_pin, HIGH);
+  noInterrupts();
 }
 
 void Wheels::Turn_L(int millisec, int inner, int outer)
