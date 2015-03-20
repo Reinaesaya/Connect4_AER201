@@ -6,6 +6,7 @@ L293D H-bridge design.
 #include "Arduino.h"
 #include "Wheels.h"
 #include "Encoder.h"
+#include "constants.h"
 
 Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
   enable_pin (EN), left_motor_f (LM_F), left_motor_b (LM_B), right_motor_f (RM_F), right_motor_b (RM_B), encoder (E)
@@ -20,9 +21,9 @@ Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
 
 void Wheels::Forward(int SPD)
 {
-  analogWrite(left_motor_f, SPD);
+  analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, SPD);
+  analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
 }
@@ -40,9 +41,9 @@ void Wheels::Forward(int SPD, signed long int ticks)
 void Wheels::Backward(int SPD)
 {
   analogWrite(left_motor_f, 0);
-  analogWrite(left_motor_b, SPD);
+  analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, 0);
-  analogWrite(right_motor_b, SPD);
+  analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
   digitalWrite(enable_pin, HIGH);
 }
 
@@ -64,8 +65,8 @@ void Wheels::Pivot_L(float angle)
   while (encoder.getPivotAngle() > ((-1)*angle))
   {
     analogWrite(left_motor_f, 0);
-    analogWrite(left_motor_b, 75);
-    analogWrite(right_motor_f, 75);
+    analogWrite(left_motor_b, PIVOT_SPEED + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_f, PIVOT_SPEED + RIGHT_MOTOR_OFFSET);
     analogWrite(right_motor_b, 0);
     digitalWrite(enable_pin, HIGH);
     delay(1);
@@ -81,10 +82,10 @@ void Wheels::Pivot_R(float angle)
   encoder.reset();
   while (encoder.getPivotAngle() < angle)
   {
-    analogWrite(left_motor_f, 75);
+    analogWrite(left_motor_f, PIVOT_SPEED + LEFT_MOTOR_OFFSET);
     analogWrite(left_motor_b, 0);
     analogWrite(right_motor_f, 0);
-    analogWrite(right_motor_b, 75);
+    analogWrite(right_motor_b, PIVOT_SPEED + RIGHT_MOTOR_OFFSET);
     digitalWrite(enable_pin, HIGH);
     delay(1);
   }
@@ -95,9 +96,9 @@ void Wheels::Pivot_R(float angle)
 void Wheels::Turn_L(int millisec, int inner, int outer)
 {
   Serial.println("Turn Left");
-  analogWrite(left_motor_f, inner);
+  analogWrite(left_motor_f, inner + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, outer);
+  analogWrite(right_motor_f, outer + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
   delay(millisec);
@@ -107,9 +108,9 @@ void Wheels::Turn_L(int millisec, int inner, int outer)
 void Wheels::Turn_R(int millisec, int inner, int outer)
 {
   Serial.println("Turn Right");
-  analogWrite(left_motor_f, outer);
+  analogWrite(left_motor_f, outer + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, inner);
+  analogWrite(right_motor_f, inner + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
   delay(millisec);

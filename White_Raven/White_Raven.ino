@@ -23,7 +23,7 @@ void setup() {
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
   attachInterrupt(R_ENC_PINA_INT, doEncoder_R_A, CHANGE);
   attachInterrupt(R_ENC_PINB_INT, doEncoder_R_B, CHANGE);
-  noInterrupts();
+  //noInterrupts();
   Serial.begin(9600);
 }
 
@@ -37,13 +37,16 @@ void loop(){
   }
   if (go != 48) {
     interrupts();
+    Serial.println(go);
     encoder.reset();
-    wheels.Pivot_L(180);
-    wheels.Stop();
-    delay(1000);
-    encoder.reset();
-    noInterrupts();
-    go = 48;
+    wheels.Forward(100);
+    //delay(2000);
+    //wheels.Pivot_L(180);
+    //wheels.Stop();
+    //delay(1000);
+    //encoder.reset();
+    //noInterrupts();
+    //go = 48;
   }
 }
 

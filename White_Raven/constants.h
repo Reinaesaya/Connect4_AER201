@@ -14,14 +14,19 @@
 
 #define TICKS_PER_90_DEG 82050
 
-// Wheels
+// Wheel pins
 #define WHEEL_ENABLE 13
 #define LEFT_WHEEL_F 12
 #define LEFT_WHEEL_B 11
 #define RIGHT_WHEEL_F 10
 #define RIGHT_WHEEL_B 9
 
-// Ultrasonic sensors
+// Wheel movements
+#define LEFT_MOTOR_OFFSET 0
+#define RIGHT_MOTOR_OFFSET 0
+#define PIVOT_SPEED 75
+
+// Ultrasonic sensor pins
 #define FRONT_TRIG 22
 #define FRONT_ECHO 23
 #define LEFT_TRIG 24
