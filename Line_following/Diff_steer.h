@@ -9,8 +9,8 @@ class DiffSteering
     void Backward(int SPD);
     void Pivot_L(int angle);
     void Pivot_R(int angle);
-    void Turn_L(int angle);
-    void Turn_R(int angle);
+    void Turn_L(int millisec, int inner, int outer);
+    void Turn_R(int millisec, int inner, int outer);
     void Stop();
     
   private:

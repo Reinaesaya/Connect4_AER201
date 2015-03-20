@@ -1,12 +1,11 @@
 #include "Diff_steer.h"
 #include "Encoder.h"
 #include "constants.h"
+#include "Ultrasonic.h"
 #include <Keypad.h>
 
-Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
-DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
-Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
-
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //four columns
 //define the cymbols on the buttons of the keypads
 char hexaKeys[ROWS][COLS] = {
   {'1','2','3','A'},
@@ -14,52 +13,57 @@ char hexaKeys[ROWS][COLS] = {
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
-byte rowPins[ROWS] = {ROW_PIN_D, ROW_PIN_C, ROW_PIN_B, ROW_PIN_A); //connect to the row pinouts of the keypad
+byte rowPins[ROWS] = {ROW_PIN_D, ROW_PIN_C, ROW_PIN_B, ROW_PIN_A}; //connect to the row pinouts of the keypad
 byte colPins[COLS] = {COL_PIN_D, COL_PIN_C, COL_PIN_B, COL_PIN_A}; //connect to the column pinouts of the keypad
-
-int x_val;
-int y_val;
-int mode;
+int Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor;
+long range_array[5] = {100,100,100,100,100};
+byte L_X_val, L_Y_val, num_ball_L, R_X_val, R_Y_val,num_ball_R;
+byte CL_X_val, CL_Y_val, num_ball_CL, CR_X_val, CR_Y_val, num_ball_CR;
 byte num_inter = 0;
 byte num_turn = 0;
 
+Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
+DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
+Ultrasonic ultrasonic(23,22);
+Keypad MyKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+
 void setup(){
   Serial.begin(9600);
-Serial.println("input x coordinate: ");
-  while (Serial.available() <= 0)
-  {
-    continue;
-  }
-  x_val = Serial.read() -48;
-  Serial.println("input y coordinate: ");
-  while (Serial.available() <= 0)
-  {
-    continue;
-  }
-  y_val = Serial.read() - 48;
-  Serial.print("going to: [");
-  Serial.print(x_val);
-  Serial.print(" , ");
-  Serial.print(y_val);
-  Serial.println(" ]");
   attachInterrupt(L_ENC_PINA_INT, doEncoder_L_A, CHANGE);
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
   attachInterrupt(R_ENC_PINA_INT, doEncoder_R_A, CHANGE);
   attachInterrupt(R_ENC_PINB_INT, doEncoder_R_B, CHANGE);
+  input_coord(L_X_val,L_Y_val,num_ball_L);
+  input_coord(R_X_val,R_Y_val,num_ball_R);
+  input_coord(CL_X_val,CL_Y_val,num_ball_CL);
+  input_coord(CR_X_val,CR_Y_val,num_ball_CR);  
   Serial.println("start...");
 }
 
 
-
 void loop(){
+  long obj_range = ultrasonic.Ranging(CM);
+  shift_add(range_array, 5, obj_range);
+  while (us_check(range_array, 5, 35) == 0 ){
+    line_following(Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor);
+  }
+  MyWheel.Pivot_R(90);
+}
+
+void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
+void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
+void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
+void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
+
+void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLsensor, int PRsensor){
   Serial.println(MyWheel.encoder.getPosLeft());
   Serial.println(MyWheel.encoder.getPosRight());
-  int Fsensor = analogRead(A15);
-  int Rsensor = analogRead(A13);
-  int Lsensor = analogRead(A14);
-  int Bsensor = analogRead(A12);
-  int PRsensor = analogRead(A9);
-  int PLsensor = analogRead(A8);  
+  Fsensor = analogRead(A15);
+  Rsensor = analogRead(A13);
+  Lsensor = analogRead(A14);
+  Bsensor = analogRead(A12);
+  PRsensor = analogRead(A9);
+  PLsensor = analogRead(A8);  
   Serial.println("sensor readings: R,L,F,B,PR,PL");
   Serial.print("reading values:   ");
   Serial.print(Rsensor);
@@ -154,11 +158,23 @@ void loop(){
     Serial.println("6");
   }
 }
-
-void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
-void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
-void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
-void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
+  
+void input_coord(byte x_coor, byte y_coor,byte num_ball){
+  
+  Serial.println("input x coordinate: ");
+  x_coor = MyKeypad.waitForKey();
+  Serial.println("input y coordinate: ");
+  y_coor = MyKeypad.waitForKey();
+  Serial.println("number of balls in there: ");
+  num_ball = MyKeypad.waitForKey();
+  Serial.print("going to: [");
+  Serial.print(x_coor);
+  Serial.print(" , ");
+  Serial.print(y_coor);
+  Serial.println(" ]");
+  Serial.print("number of balls is :");
+  Serial.println(num_ball);
+}
 
 
 void shift_add(long* arr, int length, long b){
@@ -174,14 +190,14 @@ void shift_add(long* arr, int length, long b){
 
 byte input_coor(byte num_inter, byte num_turn){
   byte direct = 0;
-  if (num_inter == y_val && num_turn == 0  && num_inter != 0)
+  if (num_inter == L_Y_val && num_turn == 0  && num_inter != 0)
   {
-    if (x_val > 0)
+    if (L_X_val > 0)
     {
       direct = 1;
     }
   }
-  else if (num_inter == x_val && num_turn == 1  && num_inter != 0)
+  else if (num_inter == L_X_val && num_turn == 1  && num_inter != 0)
   {
     while(1)
     {
@@ -193,7 +209,20 @@ byte input_coor(byte num_inter, byte num_turn){
   }
   return direct;
 }
-
+int us_check(long* arr, int length, long thresh) {
+  
+  int ret = 1;
+  
+  for (int i = 0; i != length; i++) {
+    Serial.print(arr[i]);
+    Serial.print(" ");
+    if (arr[i] >= thresh) {
+      ret = 0;
+    }
+  }
+  Serial.print("\n");
+  return ret;
+}
  
 int check_array(long* arr, int length, long thresh) {
   
