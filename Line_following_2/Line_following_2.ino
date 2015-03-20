@@ -33,10 +33,10 @@ void setup(){
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
   attachInterrupt(R_ENC_PINA_INT, doEncoder_R_A, CHANGE);
   attachInterrupt(R_ENC_PINB_INT, doEncoder_R_B, CHANGE);
-  input_coord(L_X_val,L_Y_val,num_ball_L);
-  input_coord(R_X_val,R_Y_val,num_ball_R);
-  input_coord(CL_X_val,CL_Y_val,num_ball_CL);
-  input_coord(CR_X_val,CR_Y_val,num_ball_CR);  
+  input_coord(&L_X_val,&L_Y_val,&num_ball_L);
+  input_coord(&R_X_val,&R_Y_val,&num_ball_R);
+  input_coord(&CL_X_val,&CL_Y_val,&num_ball_CL);
+  input_coord(&CR_X_val,&CR_Y_val,&num_ball_CR);  
   Serial.println("start...");
 }
 
@@ -127,8 +127,22 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
       Serial.println(num_turn);
       
       //Determine the direction
-      byte DIRECT= input_coor(num_inter, num_turn);
-      
+      byte DIRECT = 0;
+      /*switch(mode)
+      {
+        case 1:
+          DIRECT = square(num_inter, num_turn);
+          break;
+        case 2:
+          DIRECT = backup(num_inter, num_turn);
+          break;
+        case 3:
+          DIRECT = input_coor(num_inter, num_turn);
+          break;
+        case 4:
+          DIRECT = hopper(num_inter, num_turn);
+          break;
+      }*/
       //start turning...
       if(DIRECT == 1)
       {  //LEFT TURN
@@ -154,7 +168,6 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
   else 
   {
     MyWheel.Forward(75);
-    //MyWheel.Stop();
     Serial.println("6");
   }
 }
@@ -188,20 +201,20 @@ void shift_add(long* arr, int length, long b){
   //byte direct = 0;
   
 
-byte input_coor(byte num_inter, byte num_turn){
+byte hopper(byte num_inter, byte num_turn, byte x_val, byte y_val){
   byte direct = 0;
-  if (num_inter == L_Y_val && num_turn == 0  && num_inter != 0)
+  if (num_inter == y_val && num_turn == 0  && num_inter != 0)
   {
-    if (L_X_val > 0)
-    {
+    if (x_val > 0)
+    {  
       direct = 1;
     }
   }
-  else if (num_inter == L_X_val && num_turn == 1  && num_inter != 0)
+  else if (num_inter == x_val && num_turn == 1  && num_inter != 0)
   {
     while(1)
     {
-      MyWheel.Pivot_L(150);
+      MyWheel.Pivot_L(90);
       while (1){
         MyWheel.Stop();
       }

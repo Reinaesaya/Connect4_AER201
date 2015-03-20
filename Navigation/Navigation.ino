@@ -11,7 +11,7 @@ the robot from crashing into the walls.
 
 /* Instantiate ultrasonic(trig,echo)
 */
-Ultrasonic ultrasonic(23,22);
+Ultrasonic ultrasonic(22,23);
 
 /* Instantiate DiffSteering(enable, LM_F, LM_B, RM_F, RM_B)
 */
@@ -34,12 +34,12 @@ void loop()
   Serial.println(obj_range);
   
   shift_add(range_array, 5, obj_range);
-  
+  Serial.println(obj_range);
   if (check_array(range_array, 5, 40) == 1) {
     diffsteering.Pivot_R(90);
   }
   else {
-    diffsteering.Forward(255);
+    diffsteering.Forward(75);
   }
   delay(10);
 }

@@ -1,27 +1,23 @@
 #include "Diff_steer.h"
 #include "Encoder.h"
 #include "constants.h"
-#include <Keypad.h>
+#include "Ultrasonic.h"
+
 
 Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
 DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
-Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+Ultrasonic ultrasonic(22,23);
 
-//define the cymbols on the buttons of the keypads
-char hexaKeys[ROWS][COLS] = {
-  {'1','2','3','A'},
-  {'4','5','6','B'},
-  {'7','8','9','C'},
-  {'*','0','#','D'}
-};
-byte rowPins[ROWS] = {ROW_PIN_D, ROW_PIN_C, ROW_PIN_B, ROW_PIN_A); //connect to the row pinouts of the keypad
-byte colPins[COLS] = {COL_PIN_D, COL_PIN_C, COL_PIN_B, COL_PIN_A}; //connect to the column pinouts of the keypad
 
 int x_val;
 int y_val;
 int mode;
 byte num_inter = 0;
 byte num_turn = 0;
+long range_array[5] = {100,100,100,100,100};
+int Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor;
+
+
 
 void setup(){
   Serial.begin(9600);
@@ -52,14 +48,27 @@ Serial.println("input x coordinate: ");
 
 
 void loop(){
-  Serial.println(MyWheel.encoder.getPosLeft());
-  Serial.println(MyWheel.encoder.getPosRight());
-  int Fsensor = analogRead(A15);
-  int Rsensor = analogRead(A13);
-  int Lsensor = analogRead(A14);
-  int Bsensor = analogRead(A12);
-  int PRsensor = analogRead(A9);
-  int PLsensor = analogRead(A8);  
+  long obj_range = ultrasonic.Ranging(CM);
+  Serial.println(obj_range);
+  delay(1000);
+  shift_add(range_array, 5, obj_range);
+  while (us_check(range_array, 5, 35) == 1 ){
+    line_following(Lsensor, Rsensor, PLsensor, PRsensor);
+   }
+  MyWheel.Backward(50);
+}
+
+void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
+void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
+void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
+void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
+
+void line_following(int Lsensor, int Rsensor, int PLsensor, int PRsensor){
+  Serial.println("LINE FOLLOWING");
+  Rsensor = analogRead(A13);
+  Lsensor = analogRead(A14);
+  PRsensor = analogRead(A9);
+  PLsensor = analogRead(A8);  
   Serial.println("sensor readings: R,L,F,B,PR,PL");
   Serial.print("reading values:   ");
   Serial.print(Rsensor);
@@ -79,12 +88,12 @@ void loop(){
   Serial.println(MaxPL);
   if (Lsensor > (MaxL + 100) && Rsensor < (MaxR + 100))
   {
-      MyWheel.Turn_L(100,0,90);
+      MyWheel.Turn_L(80,0,90);
       Serial.println("1");
   }
   else if (Rsensor > (MaxR +100) && Lsensor < (MaxL + 100))
   {
-    MyWheel.Turn_R(100,0,90);
+    MyWheel.Turn_R(80,0,90);
     Serial.println("2");
   }
   else if (PRsensor > (MaxPR+100) || PLsensor > (MaxPL +100) )
@@ -123,8 +132,22 @@ void loop(){
       Serial.println(num_turn);
       
       //Determine the direction
-      byte DIRECT= input_coor(num_inter, num_turn);
-      
+      byte DIRECT = input_coor(num_inter, num_turn);
+      /*switch(mode)
+      {
+        case 1:
+          DIRECT = square(num_inter, num_turn);
+          break;
+        case 2:
+          DIRECT = backup(num_inter, num_turn);
+          break;
+        case 3:
+          DIRECT = input_coor(num_inter, num_turn);
+          break;
+        case 4:
+          DIRECT = hopper(num_inter, num_turn);
+          break;
+      }*/
       //start turning...
       if(DIRECT == 1)
       {  //LEFT TURN
@@ -150,16 +173,9 @@ void loop(){
   else 
   {
     MyWheel.Forward(75);
-    //MyWheel.Stop();
     Serial.println("6");
   }
 }
-
-void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
-void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
-void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
-void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
-
 
 void shift_add(long* arr, int length, long b){
   for (int i = 0; i != length; i++) {
@@ -210,6 +226,20 @@ int check_array(long* arr, int length, long thresh) {
   if (count >= length/2)
   {
     ret = 0;
+  }
+  Serial.print("\n");
+  return ret;
+}
+int us_check(long* arr, int length, long thresh) {
+  
+  int ret = 1;
+  
+  for (int i = 0; i != length; i++) {
+    Serial.print(arr[i]);
+    Serial.print(" ");
+    if (arr[i] >= thresh) {
+      ret = 0;
+    }
   }
   Serial.print("\n");
   return ret;

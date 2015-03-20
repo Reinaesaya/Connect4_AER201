@@ -22,7 +22,7 @@ void DiffSteering::Forward(int SPD)
 {
   analogWrite(left_motor_f, SPD);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, SPD);
+  analogWrite(right_motor_f, SPD+20);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
 }
@@ -32,7 +32,7 @@ void DiffSteering::Backward(int SPD)
   analogWrite(left_motor_f, 0);
   analogWrite(left_motor_b, SPD);
   analogWrite(right_motor_f, 0);
-  analogWrite(right_motor_b, SPD);
+  analogWrite(right_motor_b, SPD+20);
   digitalWrite(enable_pin, HIGH);
 }
 
