@@ -1,6 +1,18 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+// Robot Dimensions
+#define LENGTH_ROBOT 26
+#define WIDTH_ROBOT 18
+#define PIVOT_TO_FRONT_US 16
+#define PIVOT_TO_SIDE_US 11
+#define TURN_DIFFERENCE (PIVOT_TO_FRONT_US - PIVOT_TO_SIDE_US)
+
+// Playfield Dimensions
+#define GRID_SPACING 20
+#define GAMEBOARD_COL_SPACING 2
+#define GAMEBOARD_CENTER_FROM_WALL 80
+
 // Encoders
 #define R_ENC_PINA 21
 #define R_ENC_PINB 20
@@ -42,6 +54,13 @@
 #define DIST_ADJ_INNER 50
 #define DIST_ADJ_OUTER 75
 
-//
+// Navigation parameters
+#define LEFT_BOARD 0
+#define RIGHT_BOARD 1
+
+#define WALL_FIND_SPEED 75
+#define WALL_FOLLOW_SPEED 75
+#define SIDE_WALL_FOLLOW_DIST 15
+#define GAMEBOARD_WALL_FOLLOW_DIST 40
 
 #endif

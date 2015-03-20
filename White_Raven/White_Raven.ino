@@ -28,7 +28,8 @@ void setup() {
 }
 
 
-void loop(){ 
+void loop(){
+  
   if (Serial.available() > 0) {
     go = Serial.read();
     if (go == 48) {
@@ -36,17 +37,16 @@ void loop(){
     }
   }
   if (go != 48) {
-    interrupts();
-    Serial.println(go);
-    encoder.reset();
-    wheels.Forward(100);
-    //delay(2000);
-    //wheels.Pivot_L(180);
-    //wheels.Stop();
-    //delay(1000);
-    //encoder.reset();
-    //noInterrupts();
-    //go = 48;
+    get_to_gameboard(RIGHT_BOARD, 135, 4, wheels, front_ultra, left_ultra, right_ultra, range_arr_f, range_arr_l, range_arr_r);
+//    interrupts();
+//    Serial.println(go);
+//    encoder.reset();
+//    wheels.Pivot_L(180);
+//    wheels.Stop();
+//    delay(1000);
+//    encoder.reset();
+//    //noInterrupts();
+    go = 48;
   }
 }
 
