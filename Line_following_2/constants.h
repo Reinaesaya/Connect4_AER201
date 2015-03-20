@@ -23,15 +23,14 @@
 
 #define TICKS_PER_90_DEG 82050
 
-#define ROWS 4;
-#define COLS 4;
-#define ROW_PIN_D 
-#define ROW_PIN_C
-#define ROW_PIN_B 
-#define ROW_PIN_A 
-#define COL_PIN_D 
-#define COL_PIN_C
-#define COL_PIN_B
-#define COL_PIN_A
+
+#define ROW_PIN_D 20
+#define ROW_PIN_C 21
+#define ROW_PIN_B 23
+#define ROW_PIN_A 24
+#define COL_PIN_D 25
+#define COL_PIN_C 26
+#define COL_PIN_B 27
+#define COL_PIN_A 28
 
 #endif

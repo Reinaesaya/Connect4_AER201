@@ -37,7 +37,7 @@ void setup(){
     continue;
   }
   mode = Serial.read() -48;
-  Serial.println("start...")
+  Serial.println("start...");
 }
 
 
@@ -117,22 +117,8 @@ void loop(){
       Serial.println(num_turn);
       
       //Determine the direction
-      byte DIRECT;
-      switch(mode)
-      {
-        case 1:
-          DIRECT = square(num_inter, num_turn);
-          break;
-        case 2:
-          DIRECT = backup(num_inter, num_turn);
-          break;
-        case 3:
-          DIRECT = input_coor(num_inter, num_turn);
-          break;
-        case 4:
-          DIRECT = hopper(num_inter, num_turn);
-          break;
-      }
+      byte DIRECT = 1;
+     
       
       //start turning...
       while(DIRECT == 1)
