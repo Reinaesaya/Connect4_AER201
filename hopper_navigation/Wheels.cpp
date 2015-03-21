@@ -4,10 +4,11 @@ L293D H-bridge design.
 */
 
 #include "Arduino.h"
-#include "Diff_steer.h"
+#include "Wheels.h"
 #include "Encoder.h"
+#include "constants.h"
 
-DiffSteering::DiffSteering(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder E) :
+Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
   enable_pin (EN), left_motor_f (LM_F), left_motor_b (LM_B), right_motor_f (RM_F), right_motor_b (RM_B), encoder (E)
 {
    pinMode(enable_pin,OUTPUT);
@@ -18,83 +19,105 @@ DiffSteering::DiffSteering(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encod
    Serial.println("Wheels initialized");
 }
 
-void DiffSteering::Forward(int SPD)
+void Wheels::Forward(int SPD)
 {
-  analogWrite(left_motor_f, SPD);
+  analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, SPD+20);
+  analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
 }
 
-void DiffSteering::Backward(int SPD)
+void Wheels::Forward(int SPD, signed long int ticks)
+{
+  interrupts();
+  encoder.reset();
+  while ((encoder.getPosLeft() + encoder.getPosRight())/2 <= ticks)
+  { this->Forward(SPD);  }
+  this->Stop();
+  noInterrupts();
+}
+
+void Wheels::Backward(int SPD)
 {
   analogWrite(left_motor_f, 0);
-  analogWrite(left_motor_b, SPD);
+  analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, 0);
-  analogWrite(right_motor_b, SPD);
+  analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
   digitalWrite(enable_pin, HIGH);
 }
 
-void DiffSteering::Pivot_L(float angle)
+void Wheels::Backward(int SPD, signed long int ticks)
+{
+  interrupts();
+  encoder.reset();
+  while (((-1)*(encoder.getPosLeft() + encoder.getPosRight())/2) <= ticks)
+  { this->Backward(SPD);  }
+  this->Stop();
+  noInterrupts();
+}
+
+void Wheels::Pivot_L(float angle)
 {
   Serial.println("Pivot Left");
+  interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() > ((-1)*angle))
   {
     analogWrite(left_motor_f, 0);
-    analogWrite(left_motor_b, 75);
-    analogWrite(right_motor_f, 75);
+    analogWrite(left_motor_b, PIVOT_SPEED + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_f, PIVOT_SPEED + RIGHT_MOTOR_OFFSET);
     analogWrite(right_motor_b, 0);
     digitalWrite(enable_pin, HIGH);
     delay(1);
   }
   this->Stop();
-  digitalWrite(enable_pin, HIGH);
+  noInterrupts();
 }
 
-void DiffSteering::Pivot_R(float angle)
+void Wheels::Pivot_R(float angle)
 {
   Serial.println("Pivot Right");
+  interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() < angle)
   {
-    analogWrite(left_motor_f, 75);
+    analogWrite(left_motor_f, PIVOT_SPEED + LEFT_MOTOR_OFFSET);
     analogWrite(left_motor_b, 0);
     analogWrite(right_motor_f, 0);
-    analogWrite(right_motor_b, 75);
+    analogWrite(right_motor_b, PIVOT_SPEED + RIGHT_MOTOR_OFFSET);
     digitalWrite(enable_pin, HIGH);
     delay(1);
   }
   this->Stop();
-  digitalWrite(enable_pin, HIGH);
+  noInterrupts();
 }
 
-void DiffSteering::Turn_L(int millisec, int inner, int outer)
+void Wheels::Turn_L(int millisec, int inner, int outer)
 {
   Serial.println("Turn Left");
-  analogWrite(left_motor_f, inner); // Arbitrary speed
+  analogWrite(left_motor_f, inner + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, outer);
+  analogWrite(right_motor_f, outer + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
-  delay(millisec); // Arbitrary estimation of time
+  delay(millisec);
   digitalWrite(enable_pin, HIGH);
 }
 
-void DiffSteering::Turn_R(int millisec, int inner, int outer)
+void Wheels::Turn_R(int millisec, int inner, int outer)
 {
   Serial.println("Turn Right");
-  analogWrite(left_motor_f, outer); // Arbitrary speed
+  analogWrite(left_motor_f, outer + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, inner);
+  analogWrite(right_motor_f, inner + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
-  delay(millisec); // Arbitrary estimation of time
+  delay(millisec);
   digitalWrite(enable_pin, HIGH);
 }
 
-void DiffSteering::Stop()
+void Wheels::Stop()
 { // Complete restart, not just pause
   Serial.println("Stop");
   analogWrite(left_motor_f, 0);

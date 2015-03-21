@@ -1,53 +1,49 @@
-#include "Diff_steer.h"
+#include "Wheels.h"
 #include "Encoder.h"
 #include "constants.h"
 #include "Ultrasonic.h"
-#include <Keypad.h>
 
-const byte ROWS = 4; //four rows
-const byte COLS = 4; //four columns
-//define the cymbols on the buttons of the keypads
-char hexaKeys[ROWS][COLS] = {
-  {'1','2','3','A'},
-  {'4','5','6','B'},
-  {'7','8','9','C'},
-  {'*','0','#','D'}
-};
-byte rowPins[ROWS] = {ROW_PIN_D, ROW_PIN_C, ROW_PIN_B, ROW_PIN_A}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {COL_PIN_D, COL_PIN_C, COL_PIN_B, COL_PIN_A}; //connect to the column pinouts of the keypad
-int Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor;
-long range_array[5] = {100,100,100,100,100};
-byte L_X_val, L_Y_val, num_ball_L, R_X_val, R_Y_val,num_ball_R;
-byte CL_X_val, CL_Y_val, num_ball_CL, CR_X_val, CR_Y_val, num_ball_CR;
-byte num_inter = 0;
-byte num_turn = 0;
 
 Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
-DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
-Ultrasonic ultrasonic(23,22);
-Keypad MyKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
+Wheels MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
+Ultrasonic ultrasonic(22,23);
+
+byte L_X_val, L_Y_val, num_ball_L, R_X_val, R_Y_val,num_ball_R;
+byte CL_X_val, CL_Y_val, num_ball_CL, CR_X_val, CR_Y_val, num_ball_CR;
+byte mode;
+byte side;
+byte num_inter = 0;
+byte num_turn = 0;
+long range_array[5] = {100,100,100,100,100};
+int Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor;
+
+
 
 void setup(){
   Serial.begin(9600);
+  init_white_raven(&L_X_val,&L_Y_val,&num_ball_L);
+  init_white_raven(&R_X_val,&R_Y_val,&num_ball_R);
+  init_white_raven(&CL_X_val,&CL_Y_val,&num_ball_CL);
+  init_white_raven(&CR_X_val,&CR_Y_val,&num_ball_CR); 
   attachInterrupt(L_ENC_PINA_INT, doEncoder_L_A, CHANGE);
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
   attachInterrupt(R_ENC_PINA_INT, doEncoder_R_A, CHANGE);
   attachInterrupt(R_ENC_PINB_INT, doEncoder_R_B, CHANGE);
-  input_coord(&L_X_val,&L_Y_val,&num_ball_L);
-  input_coord(&R_X_val,&R_Y_val,&num_ball_R);
-  input_coord(&CL_X_val,&CL_Y_val,&num_ball_CL);
-  input_coord(&CR_X_val,&CR_Y_val,&num_ball_CR);  
   Serial.println("start...");
 }
 
-
 void loop(){
-  long obj_range = ultrasonic.Ranging(CM);
-  shift_add(range_array, 5, obj_range);
-  while (us_check(range_array, 5, 35) == 0 ){
-    line_following(Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor);
+  
+  backward_align(PLsensor, PRsensor);
+  mode = choose_hopper(CL_Y_val, CL_X_val, num_ball_CL,CR_Y_val, CR_X_val, num_ball_CR, num_ball_L, num_ball_R);
+  if (mode % 2 == 0)  MyWheel.Pivot_R(90);
+  else MyWheel.Pivot_L(90);
+  
+  while(num_turn != 2){
+    line_following(Lsensor,Rsensor,PLsensor,PRsensor);
   }
-  MyWheel.Pivot_R(90);
+  num_turn = 0;
+  MyWheel.Stop();
 }
 
 void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
@@ -55,15 +51,12 @@ void doEncoder_L_B() {MyWheel.encoder.update_L_B();}
 void doEncoder_R_A() {MyWheel.encoder.update_R_A();}
 void doEncoder_R_B() {MyWheel.encoder.update_R_B();}
 
-void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLsensor, int PRsensor){
-  Serial.println(MyWheel.encoder.getPosLeft());
-  Serial.println(MyWheel.encoder.getPosRight());
-  Fsensor = analogRead(A15);
-  Rsensor = analogRead(A13);
-  Lsensor = analogRead(A14);
-  Bsensor = analogRead(A12);
-  PRsensor = analogRead(A9);
-  PLsensor = analogRead(A8);  
+void line_following(int Lsensor, int Rsensor, int PLsensor, int PRsensor, byte mode){
+  Serial.println("LINE FOLLOWING");
+  Rsensor = analogRead(13);
+  Lsensor = analogRead(14);
+  PRsensor = analogRead(9);
+  PLsensor = analogRead(8);  
   Serial.println("sensor readings: R,L,F,B,PR,PL");
   Serial.print("reading values:   ");
   Serial.print(Rsensor);
@@ -83,12 +76,12 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
   Serial.println(MaxPL);
   if (Lsensor > (MaxL + 100) && Rsensor < (MaxR + 100))
   {
-      MyWheel.Turn_L(100,0,90);
+      MyWheel.Turn_L(50,0,90);
       Serial.println("1");
   }
   else if (Rsensor > (MaxR +100) && Lsensor < (MaxL + 100))
   {
-    MyWheel.Turn_R(100,0,90);
+    MyWheel.Turn_R(50,0,90);
     Serial.println("2");
   }
   else if (PRsensor > (MaxPR+100) || PLsensor > (MaxPL +100) )
@@ -100,8 +93,8 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
       int PLsensor_Inter;
       for (int n = 0; n < 8; n++)
       {
-         int PRsensor_Inter = analogRead(A9);
-         int PLsensor_Inter = analogRead(A8); 
+         int PRsensor_Inter = analogRead(9);
+         int PLsensor_Inter = analogRead(8); 
          shift_add(check_arrayPR, 5, PRsensor_Inter);   
          shift_add(check_arrayPL, 5, PLsensor_Inter);
       }
@@ -112,14 +105,11 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
       Serial.println(state1);
       Serial.print("state 2 is: ");
       Serial.println(state2);
-      if (((PRsensor > (MaxPR+100)) && state1) || ((PLsensor > (MaxPL+100)) && state2) )
-      {
-         num_inter++;
-      }
-      else if (PRsensor > (MaxPR+100) && PLsensor > (MaxPL+100))
+      if (((PRsensor > (MaxPR+100)) && state1) || ((PLsensor > (MaxPL+100)) && state2) )  
       {
         num_inter++;
       }
+      else if (state1 == 0 && state2 == 0)  num_inter++;
       MyWheel.Stop();
       Serial.print("number of inters encounterted: ");
       Serial.println(num_inter);
@@ -127,36 +117,41 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
       Serial.println(num_turn);
       
       //Determine the direction
-      byte DIRECT = 0;
-      /*switch(mode)
+      byte DIRECT;
+      switch(mode)
       {
         case 1:
-          DIRECT = square(num_inter, num_turn);
+          // the left center hopper
+          DIRECT = input_coor(num_inter, num_turn, CL_X_val, CL_Y_val);
           break;
         case 2:
-          DIRECT = backup(num_inter, num_turn);
+          // the right center hopper
+          DIRECT = input_coor(num_inter, num_turn, CR_X_val, CR_Y_val);
           break;
         case 3:
-          DIRECT = input_coor(num_inter, num_turn);
+          // the left side hopper
+          DIRECT = input_coor(num_inter, num_turn, L_X_val, L_Y_val);
           break;
         case 4:
-          DIRECT = hopper(num_inter, num_turn);
+          // the right side hopper
+          DIRECT = input_coor(num_inter, num_turn, R_X_val, R_Y_val);
           break;
-      }*/
+      }
       //start turning...
       if(DIRECT == 1)
       {  //LEFT TURN
         num_inter = 0;
         Serial.println("3");
         MyWheel.Pivot_L(90);
+        MyWheel.Forward(50,TURNING_OFFSET);
         num_turn += 1;
-        MyWheel.Stop();
       }
       if (DIRECT == 2)
       {  //LEFT RIGHT
           num_inter = 0;
           Serial.println("4");
           MyWheel.Pivot_R(90);
+          MyWheel.Forward(50,TURNING_OFFSET);
           num_turn += 1;
       }
       if (DIRECT == 0)
@@ -171,25 +166,36 @@ void line_following(int Fsensor, int Bsensor, int Lsensor, int Rsensor, int PLse
     Serial.println("6");
   }
 }
-  
-void input_coord(byte *x_coor, byte *y_coor,byte *num_ball){
-  
-  Serial.println("input x coordinate: ");
-  *x_coor = MyKeypad.waitForKey();
-  Serial.println("input y coordinate: ");
-  *y_coor = MyKeypad.waitForKey();
-  Serial.println("number of balls in there: ");
-  *num_ball = MyKeypad.waitForKey();
-  Serial.print("going to: [");
-  Serial.print(*x_coor);
-  Serial.print(" , ");
-  Serial.print(*y_coor);
-  Serial.println(" ]");
-  Serial.print("number of balls is :");
-  Serial.println(*num_ball);
+
+void backward_align(int PRsensor, int PLsensor){
+  Serial.println("backward aligning");
+  PRsensor = analogRead(9);
+  PLsensor = analogRead(8); 
+  while ((PRsensor < (MaxPR+50)) && (PLsensor < (MaxPL +50)))
+  {
+    PRsensor = analogRead(9);
+    PLsensor = analogRead(8); 
+    MyWheel.Backward(50);
+    Serial.print(PRsensor);
+    Serial.print(' ');
+    Serial.println(PLsensor);
+  }
+  MyWheel.Forward(50,TURNING_OFFSET);
+  MyWheel.Stop();
 }
-
-
+  
+  
+byte choose_hopper(byte CL_Y, byte CL_X, byte CL_B, byte CR_Y, byte CR_X, byte CR_B, byte SL_B, byte SR_B){
+  byte side
+  L_dist = L_Y + L_X;
+  R_dist = R_Y + R_X;
+  if (R_dist < L_dist && R_B > 0)  side = 2;
+  else if (R_B == 0 && L_B > 0)  side = 1;
+  else if (R_B == 0 && L_B == 0) side = 3
+  else side = 4;
+  return side 
+}
+    
 void shift_add(long* arr, int length, long b){
   for (int i = 0; i != length; i++) {
     *(arr + i) = *(arr + i + 1);
@@ -197,45 +203,44 @@ void shift_add(long* arr, int length, long b){
   arr[length-1] = b;
 }
 
-//byte direct_det(byte num_inter, byte num_turn, byte num_hopper){
-  //byte direct = 0;
-  
+void init_white_raven(byte *x_val, byte *y_val, byte *num_ball){
+  Serial.println("input x coordinate: ");
+  while (Serial.available() <= 0)
+  {
+    continue;
+  }
+  *x_val = Serial.read() -48;
+  Serial.println(*x_val);
+  Serial.println("input y coordinate: ");
+  while (Serial.available() <= 0)
+  {
+    continue;
+  }
+  *y_val = Serial.read() - 48;
+  Serial.println(*y_val);
+  Serial.println("input number of balls: ");
+  while (Serial.available() <= 0)
+  {
+    continue;
+  }
+  *num_ball = Serial.read() - 48;
+  Serial.println(*num_ball);
+}
 
-byte hopper(byte num_inter, byte num_turn, byte x_val, byte y_val){
+byte input_coor(byte num_inter, byte num_turn, byte x_val, byte y_val){
   byte direct = 0;
   if (num_inter == y_val && num_turn == 0  && num_inter != 0)
   {
-    if (x_val > 0)
-    {  
-      direct = 1;
-    }
+    direct = 2;
   }
   else if (num_inter == x_val && num_turn == 1  && num_inter != 0)
   {
-    while(1)
-    {
-      MyWheel.Pivot_L(90);
-      while (1){
-        MyWheel.Stop();
-      }
-    }
+      direct = 1; 
   }
+  MyWheel.Stop();
   return direct;
 }
-int us_check(long* arr, int length, long thresh) {
-  
-  int ret = 1;
-  
-  for (int i = 0; i != length; i++) {
-    Serial.print(arr[i]);
-    Serial.print(" ");
-    if (arr[i] >= thresh) {
-      ret = 0;
-    }
-  }
-  Serial.print("\n");
-  return ret;
-}
+
  
 int check_array(long* arr, int length, long thresh) {
   
@@ -252,6 +257,22 @@ int check_array(long* arr, int length, long thresh) {
   if (count >= length/2)
   {
     ret = 0;
+  }
+  Serial.print("\n");
+  return ret;
+}
+
+
+int us_check(long* arr, int length, long thresh) {
+  
+  int ret = 1;
+  
+  for (int i = 0; i != length; i++) {
+    Serial.print(arr[i]);
+    Serial.print(" ");
+    if (arr[i] >= thresh) {
+      ret = 0;
+    }
   }
   Serial.print("\n");
   return ret;

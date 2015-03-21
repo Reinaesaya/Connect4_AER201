@@ -24,7 +24,7 @@ void loop(){
     }
   }
   if (go != 48) {
-    diffsteering.Pivot_L(60);
+    diffsteering.Pivot_R(10);
     diffsteering.Stop();
     delay(1000);
     go = 48;
