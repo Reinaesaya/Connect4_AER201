@@ -23,7 +23,7 @@
 
 // Wheel movements
 #define LEFT_MOTOR_OFFSET 0
-#define RIGHT_MOTOR_OFFSET 40
+#define RIGHT_MOTOR_OFFSET 20
 #define PIVOT_SPEED 75
 #define TURNING_OFFSET 10900
 
