@@ -1,5 +1,5 @@
-int lightPin1 = 0;
-int lightPin2 = 1;
+//int lightPin1 = A5;
+int lightPin2 = A0;
 
 void setup()
 {
@@ -8,8 +8,8 @@ void setup()
 
 void loop()
 {
-   Serial.print(analogRead(lightPin1));
-   Serial.print(" ");
+   //Serial.print(analogRead(lightPin1));
+   //Serial.print(" ");
    Serial.println(analogRead(lightPin2));
    delay(10);
 }

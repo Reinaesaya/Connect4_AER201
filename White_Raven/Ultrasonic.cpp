@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "Ultrasonic.h"
+#include "Basic.h"
 
 Ultrasonic::Ultrasonic(int TP, int EP)
 {
@@ -29,4 +30,19 @@ long Ultrasonic::Ranging(int sys)
   return distance_cm;
   else
   return distance_inc;
+}
+
+void Ultrasonic::initialize_array()
+{
+  for (int i=0; i<=(RANGE_ARRAY_LEN*2); ++i) {
+    long dist = this->Ranging(CM);
+    shift_add(this->array, dist);
+    my_delay(10); // my_delay disables interrupts after so use normal delay
+  }
+}
+
+void Ultrasonic::update_array()
+{
+  long dist = this->Ranging(CM);
+  shift_add(this->array, dist);
 }

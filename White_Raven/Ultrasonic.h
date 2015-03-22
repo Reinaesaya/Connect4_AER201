@@ -9,6 +9,7 @@
 #define Ultrasonic_h
 
 #include "Arduino.h"
+#include "constants.h"
 
 #define CM 1
 #define INC 0
@@ -17,8 +18,13 @@ class Ultrasonic
 {
   public:
     Ultrasonic(int TP, int EP);
+    long array[RANGE_ARRAY_LEN];
+    
     long Timing();
     long Ranging(int sys);
+    
+    void initialize_array();
+    void update_array();
 
   private:
     int Trig_pin;

@@ -22,10 +22,10 @@ class Encoder
     void reset();
     
   private:
-    const int left_pin_a;
-    const int left_pin_b;
-    const int right_pin_a;
-    const int right_pin_b;
+    volatile const int left_pin_a;
+    volatile const int left_pin_b;
+    volatile const int right_pin_a;
+    volatile const int right_pin_b;
     bool L_A_set;
     bool L_B_set;
     bool R_A_set;
