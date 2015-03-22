@@ -3,6 +3,9 @@
 
 #include "Ultrasonic.h"
 #include "Wheels.h"
+#include <Stepper.h>
+
+void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasonic& front_US);
 
 int choose_column(int *dispense_order, int *dispense_count, int num_dispensed);
 

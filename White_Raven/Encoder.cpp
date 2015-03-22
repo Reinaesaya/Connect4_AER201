@@ -58,5 +58,4 @@ void Encoder::reset()
   this->L_B_set = false;
   this->R_A_set = false;
   this->R_B_set = false;
-  Serial.println("Encoder Reset");
 }

@@ -26,12 +26,12 @@ class Encoder
     volatile const int left_pin_b;
     volatile const int right_pin_a;
     volatile const int right_pin_b;
-    bool L_A_set;
-    bool L_B_set;
-    bool R_A_set;
-    bool R_B_set;
-    signed long int left_pos;
-    signed long int right_pos;
+    volatile bool L_A_set;
+    volatile bool L_B_set;
+    volatile bool R_A_set;
+    volatile bool R_B_set;
+    volatile signed long int left_pos;
+    volatile signed long int right_pos;
 };
 
 

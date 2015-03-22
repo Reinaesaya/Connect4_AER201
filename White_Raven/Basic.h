@@ -7,5 +7,6 @@ void shift_add(long* arr, long b);
 int check_array(long* arr, long thresh);
 int get_input_number();
 void my_delay(unsigned long milli);
+void update_angle(float& angle);
 
 #endif

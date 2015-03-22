@@ -4,6 +4,36 @@
 #include "Basic.h"
 #include "Wall.h"
 
+void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasonic& front_US)
+{
+  forward_to_dist(HOPPER_STOP_DIST, wheels, front_US, BALL_GRAB_SPD);
+  Serial.println("Forward");
+  my_delay(1000);
+  interrupts();
+  Serial.println("Down");
+  stepper.step(STEPPER_NSTEPS);
+    my_delay(1000);
+  Serial.println("Forward");
+  wheels.Forward(BALL_GRAB_SPD, HOPPER_FORWARD_TICK);
+    my_delay(1000);
+  Serial.println("Back");
+  if (side == LEFT_BOARD)
+  {
+    wheels.Back_L(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
+    angle = angle - 45;
+  }
+  else if (side == RIGHT_BOARD)
+  {
+    wheels.Back_R(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
+    angle = angle + 45;
+  }
+    my_delay(1000);
+  interrupts();
+  Serial.println("Up");
+  stepper.step(-STEPPER_NSTEPS);
+    my_delay(1000);
+}
+
 int choose_column(int *dispense_order, int *dispense_count, int num_dispensed)
 {
   int chosen;
