@@ -34,7 +34,7 @@ void line_following(Wheels& MyWheel, byte mode, byte *num_inter, byte *num_turn,
       Serial.println("1");
   }
   else if (Rsensor > (MaxR +100) && Lsensor < (MaxL + 100))
-  {
+  { 
     MyWheel.Turn_R(50,0,90);
     Serial.println("2");
   }
