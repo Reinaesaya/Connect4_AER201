@@ -6,6 +6,17 @@
 
 /* BASIC WALL FOLLOWING FUNCTIONS */
 
+long get_current_dist(Ultrasonic& US)
+{
+  US.initialize_array();
+  long sum = 0;
+  for (int i=0; i<ARRAY_LEN; ++i)
+  {
+    sum += US.array[i];
+  }
+  return (long)(sum/ARRAY_LEN);
+}
+
 void wall_straight_adjust(int side, Ultrasonic& side_US, int SPD, Wheels& wheels)
 /* Performs one iteration of adjustment for wall following.
    Follows the wall at any arbitrary distance but maintains a straight line.
@@ -74,11 +85,9 @@ void forward_to_dist(long stop_dist, Wheels& wheels, Ultrasonic& front_US, int S
 {
   front_US.initialize_array();
   my_delay(1000);
-  Serial.println("Got here");
   my_delay(1000);
   while (check_array(front_US.array, stop_dist) != 1)
   {
-    //Serial.println("got here");
     front_US.update_array();
     wheels.Forward(SPD);
   }
@@ -96,8 +105,6 @@ void forward_to_dist_wall(int side, long stop_dist, long wall_dist, Wheels& whee
   {
     front_US.update_array();
     side_US.update_array();
-    Serial.println("Side");
-    check_array(side_US.array, wall_dist);
     if (loops % 2 == 0) wall_straight_adjust(side, side_US, SPD, wheels);
     else wall_dist_adjust(side, side_US, wall_dist, SPD, wheels);
     loops++;
@@ -132,21 +139,25 @@ void get_to_gameboard(int side, float& angle, int game_column, Wheels& wheels, U
   find_wall_and_position(side, angle, wheels, front_US);
   if (side == LEFT_BOARD)
   {
-    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
+    long follow_dist = get_current_dist(left_US);
+    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, follow_dist, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_R(90);
+    follow_dist = get_current_dist(left_US);
     long stop_dist = (long)((-1)*(((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
-    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
+    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, follow_dist, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_L(90);
   }
   else if (side == RIGHT_BOARD)
   {
-    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
+    long follow_dist = get_current_dist(right_US);
+    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, follow_dist, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_L(90);
+    follow_dist = get_current_dist(right_US);
     long stop_dist = (long)((((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
-    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
+    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, follow_dist, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_R(90);
   }

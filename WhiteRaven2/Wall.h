@@ -5,6 +5,7 @@
 #include "Wheels.h"
 
 /* BASIC WALL FOLLOWING FUNCTIONS */
+long get_current_dist(Ultrasonic& US);
 void wall_straight_adjust(int side, Ultrasonic& side_US, int SPD, Wheels& wheels);
 void wall_dist_adjust(int side, Ultrasonic& side_US, long targ, int SPD, Wheels& wheels);
 
