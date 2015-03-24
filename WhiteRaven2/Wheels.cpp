@@ -59,6 +59,8 @@ void Wheels::Backward(int SPD, signed long int ticks)
 
 void Wheels::Pivot_L(float angle)
 {
+  Serial.print("Pivot_L: ");
+  Serial.println(angle);
   interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() > ((-1)*angle))
@@ -75,6 +77,8 @@ void Wheels::Pivot_L(float angle)
 
 void Wheels::Pivot_R(float angle)
 {
+  Serial.print("Pivot_R: ");
+  Serial.println(angle);
   interrupts();
   encoder.reset();
   while (encoder.getPivotAngle() < angle)

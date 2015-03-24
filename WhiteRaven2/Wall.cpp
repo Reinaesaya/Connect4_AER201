@@ -70,11 +70,15 @@ void wall_dist_adjust(int side, Ultrasonic& side_US, long targ, int SPD, Wheels&
 /* WALL POSITIONING AND NAVIGATION */
 
 void forward_to_dist(long stop_dist, Wheels& wheels, Ultrasonic& front_US, int SPD)
-// Move robot forward until front sensor hits certain distance
+// Move robot forward until front sensor hits certain dise
 {
   front_US.initialize_array();
+  my_delay(1000);
+  Serial.println("Got here");
+  my_delay(1000);
   while (check_array(front_US.array, stop_dist) != 1)
   {
+    //Serial.println("got here");
     front_US.update_array();
     wheels.Forward(SPD);
   }

@@ -35,7 +35,7 @@
 
 // Wheel movements
 #define LEFT_MOTOR_OFFSET 0
-#define RIGHT_MOTOR_OFFSET 40
+#define RIGHT_MOTOR_OFFSET 50
 #define PIVOT_SPEED 75
 
 // Ultrasonic sensor pins
@@ -55,9 +55,9 @@
 
 // Ball grabbing parameters
 #define STEPPER_SPEED 60
-#define STEPPER_NSTEPS 100
+#define STEPPER_NSTEPS 150
 #define HOPPER_STOP_DIST 25
-#define HOPPER_FORWARD_TICK 30000
+#define HOPPER_FORWARD_TICK 40000
 #define BALL_GRAB_SPD 150
 #define BACK_TURN_MILLI 1200
 #define BACK_INNER_SPD 60
@@ -90,7 +90,7 @@
 #define LEFT_BOARD 0
 #define RIGHT_BOARD 1
 
-#define LINE_FOLLOW_SPEED 75
+#define LINE_FOLLOW_SPEED 100
 #define LINE_FOLLOW_FORWARD_TICK_OFFSET 10900
 #define LEFT_TURN 0
 #define RIGHT_TURN 1

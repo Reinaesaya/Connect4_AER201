@@ -4,7 +4,7 @@
 #include "Ultrasonic.h"
 #include <Stepper.h>
 #include "Wall.h"
-#include "Gameplay.h"
+#include "GamePlay.h"
 #include "MyLineFollow.h"
 #include "Hopper.h"
 #include "constants.h"
@@ -66,15 +66,15 @@ void setup() {
 
 void loop(){
   
-    float angle = 45;
+    float angle = 135;
     //Serial.println("Get to Hopper");
     //get_to_hopper_pos(wheels, hoppers[hopper_order[num_dispensed]], front_ultra, right_ultra, left_ultra, angle);
-    //Serial.println("GetBall");
-    //getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
-    //my_delay(500);
-    //Serial.println("Update Angle");
-    //update_angle(angle);
-    //Serial.print("Choose column: ");
+    Serial.println("GetBall");
+    getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
+    my_delay(500);
+    Serial.println("Update Angle");
+    update_angle(angle);
+    Serial.print("Choose column: ");
     int num = choose_column(dispense_order, dispense_count, num_dispensed);
     Serial.println(num);
     my_delay(500);
@@ -83,7 +83,7 @@ void loop(){
     Serial.println("Dispense");
     dispense(num_dispensed, front_ultra, wheels, 75);
     my_delay(500);
-    //get_to_origin_from_gameboard(wheels, hoppers[hopper_order[num_dispensed]]);
+    get_to_origin_from_gameboard(wheels, hoppers[hopper_order[num_dispensed]]);
     while (true)
     {
       continue;

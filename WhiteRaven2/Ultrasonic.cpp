@@ -34,11 +34,14 @@ long Ultrasonic::Ranging(int sys)
 
 void Ultrasonic::initialize_array()
 {
+  Serial.println("Initializing Array");
   for (int i=0; i<=(ARRAY_LEN*2); ++i) {
     long dist = this->Ranging(CM);
     shift_add(this->array, dist);
+    Serial.println(dist);
     my_delay(10); // my_delay disables interrupts after so use normal delay
   }
+  Serial.println("End Initialization");
 }
 
 void Ultrasonic::update_array()
