@@ -24,11 +24,11 @@ int check_array(long* arr, long thresh)
 {
   int ret = 1;
   for (int i=0; i!=ARRAY_LEN; i++) {
-    //Serial.print(arr[i]);
-    //Serial.print(" ");
+    Serial.print(arr[i]);
+    Serial.print(" ");
     if (arr[i] >= thresh) ret = 0;
   }
-  //Serial.print("\n");
+  Serial.print("\n");
   return ret;
 }
 int check_array(int* arr, int thresh)
@@ -36,11 +36,11 @@ int check_array(int* arr, int thresh)
 {
   int ret = 1;
   for (int i=0; i!=ARRAY_LEN; i++) {
-    //Serial.print(arr[i]);
-    //Serial.print(" ");
+    Serial.print(arr[i]);
+    Serial.print(" ");
     if (arr[i] >= thresh) ret = 0;
   }
-  //Serial.print("\n");
+  Serial.print("\n");
   return ret;
 }
 

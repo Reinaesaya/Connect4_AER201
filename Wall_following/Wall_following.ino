@@ -3,8 +3,8 @@
 
 #define FRONT_TRIG 22
 #define FRONT_ECHO 23
-#define LEFT_TRIG 44
-#define LEFT_ECHO 45
+#define LEFT_TRIG 24
+#define LEFT_ECHO 25
 #define RANGE_ARRAY_LEN 6
 
 Ultrasonic us_f(FRONT_TRIG,FRONT_ECHO);

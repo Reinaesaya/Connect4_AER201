@@ -12,12 +12,12 @@ void Hopper::update(int side, int corner, int orientation, int from_center)
   {
     if (orientation == FLAT_UP)
     {
-      stop_forw = 1;
+      stop_forw = 0;
       angle = 180;
     }
     else if (orientation == FLAT_DOWN)
     {
-      stop_forw = 6;
+      stop_forw = 5;
       angle = 0;
     }
     if (from_center == CLOSE_CENTER)
@@ -35,7 +35,7 @@ void Hopper::update(int side, int corner, int orientation, int from_center)
   }
   else if (this->corner == CORNER_HOP)
   {
-    stop_forw = 6;
+    stop_forw = 5;
     stop_side = 1;
     tick_offset = 10;
     if (side == LEFT_BOARD) { angle = 45; }

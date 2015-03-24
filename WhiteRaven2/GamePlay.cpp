@@ -11,7 +11,7 @@ void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasoni
   my_delay(1000);
   interrupts();
   Serial.println("Down");
-  stepper.step(STEPPER_NSTEPS);
+  //stepper.step(STEPPER_NSTEPS);
     my_delay(1000);
   Serial.println("Forward");
   wheels.Forward(BALL_GRAB_SPD, HOPPER_FORWARD_TICK);
@@ -30,7 +30,7 @@ void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasoni
     my_delay(1000);
   interrupts();
   Serial.println("Up");
-  stepper.step(-STEPPER_NSTEPS);
+  //stepper.step(-STEPPER_NSTEPS);
     my_delay(1000);
 }
 

@@ -10,8 +10,8 @@ the robot from crashing into the walls.
 #include "Diff_steer.h"
 #include <Stepper.h>
 
-#define STEPPER_SPEED 60
-#define STEPPER_STEPS 100
+#define STEPPER_SPEED 30
+#define STEPPER_STEPS 200
 
 /*Instantiate stepper*/
 
@@ -42,33 +42,34 @@ void loop()
   
   if (check_array(range_array_1, 5, 35) == 1) {
     getBall(diffsteering, stepper);
+    while (true) continue;
   }
   else {
-    diffsteering.Forward(90);
+    //diffsteering.Forward(90);
   }
   delay(10);
 }
 
 void getBall(DiffSteering wheels, Stepper stepper) {
     Serial.println("Starting Ball Extraction");
-      diffsteering.Stop();
+      //diffsteering.Stop();
       delay(1000);
     Serial.println("Down");
       stepper.step(STEPPER_STEPS);
       delay(1000);
     Serial.println("Forward");
-      diffsteering.Forward(90);
+      //diffsteering.Forward(90);
       delay(2000);
-      diffsteering.Stop();
-      delay(1000);
+      //diffsteering.Stop();
+      //delay(1000);
     Serial.println("Side");
-      diffsteering.Turn_R(750, 0, 90);
-      diffsteering.Stop();
+      //diffsteering.Turn_R(750, 0, 90);
+      //diffsteering.Stop();
       delay(2000);
     Serial.println("Backward");
-      diffsteering.Backward(90);
-      delay(2000);
-      diffsteering.Stop();
+      //diffsteering.Backward(90);
+      //delay(2000);
+      //diffsteering.Stop();
     Serial.println("Up");
       stepper.step(-STEPPER_STEPS);
       delay(1000);

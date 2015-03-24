@@ -50,11 +50,13 @@ void line_follow_intersection(Wheels& wheels, int& num_intersections)
 
 void line_follow_n_intersections(Wheels& wheels, int num)
 {
+  Serial.println(num);
   int num_intersections = 0;
-  while (num_intersections <= num)
+  while (num_intersections < num)
   {
     wheels.Forward(LINE_FOLLOW_SPEED, LINE_FOLLOW_FORWARD_TICK_OFFSET);
     line_follow_intersection(wheels, num_intersections);
+    Serial.println(num_intersections);
   }
   wheels.Stop();
 }
@@ -79,17 +81,18 @@ void get_to_hopper_pos(Wheels& wheels, Hopper& hopper, Ultrasonic& front_US, Ult
       if (hopper.stop_forw > 3)
       {
         wheels.Pivot_L(90);
-        forward_to_dist_wall(HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, left_US, 125);
+        forward_to_dist_wall(hopper.side, HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, left_US, 125);
       }
       else 
       {
         wheels.Pivot_R(90);
-        forward_to_dist_wall(HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, right_US, 125);
+        forward_to_dist_wall(!hopper.side, HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, right_US, 125);
       }
     }
   }
   else if (hopper.side == RIGHT_BOARD)
   {
+    Serial.println("Got here");
     grid_follow(wheels, RIGHT_TURN, hopper.stop_forw, hopper.stop_side);
     wheels.Forward(75, hopper.tick_offset);
     if (hopper.corner == CORNER_HOP) { wheels.Pivot_L(135); }
@@ -98,12 +101,12 @@ void get_to_hopper_pos(Wheels& wheels, Hopper& hopper, Ultrasonic& front_US, Ult
       if (hopper.stop_forw > 3)
       {
         wheels.Pivot_R(90);
-        forward_to_dist_wall(HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, right_US, 125);
+        forward_to_dist_wall(hopper.side, HOPPER_STOP_DIST + 5, hopper.dist_to_wall, wheels, front_US, right_US, 125);
       }
       else 
       {
         wheels.Pivot_L(90);
-        forward_to_dist_wall(HOPPER_STOP_DIST + 10, hopper.dist_to_wall, wheels, front_US, left_US, 125);
+        forward_to_dist_wall(!hopper.side, HOPPER_STOP_DIST + 5, hopper.dist_to_wall, wheels, front_US, left_US, 125);
       }
     }
   }
