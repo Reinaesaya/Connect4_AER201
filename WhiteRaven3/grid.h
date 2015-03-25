@@ -1,16 +1,11 @@
-#ifndef HOPPER_H
-#define HOPPER_H
+#ifndef GRID_H
+#define GRID_H
 
 #include "Wheels.h"
 #include "Encoder.h"
 #include "constants.h"
 #include "Arduino.h"
 
-/* ENCODER INTERRUPT*/
-void doEncoder_L_A();
-void doEncoder_L_B();
-void doEncoder_R_A();
-void doEncoder_R_B();
 
 /* NAVIGATION USING IR SENSOR*/
 void line_following(Wheels& wheels);

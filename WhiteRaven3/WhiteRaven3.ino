@@ -64,11 +64,10 @@ void setup() {
   init_white_raven(&CR_X_val,&CR_Y_val,&num_ball_CR,&angle_CR); 
   ball_count = 0;
   
-  
-  /*hoppers[0].update(LEFT_BOARD, CORNER_HOP, 0,0);
+  hoppers[0].update(LEFT_BOARD, CORNER_HOP, 0,0);
   hoppers[1].update(LEFT_BOARD, NOT_CORNER_HOP, L_Orient, L_Close);
   hoppers[2].update(RIGHT_BOARD, NOT_CORNER_HOP, R_Orient, R_Close);
-  hoppers[3].update(RIGHT_BOARD, CORNER_HOP, 0,0);*/
+  hoppers[3].update(RIGHT_BOARD, CORNER_HOP, 0,0);
  
   attachInterrupt(L_ENC_PINA_INT, doEncoder_L_A, CHANGE);
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
@@ -82,7 +81,22 @@ void setup() {
 
 
 void loop() {
-  
+    int num;
+    if (ball_count == 0)
+    {
+      Serial.println("first ball");
+      float angle = 225;
+      i_hopper_navigation(wheels, 4, &num_turn, &num_inter, 2, 1, 45);
+      getBall(side, angle, wheels, stepper, front_ultra);
+      my_delay(500);
+      update_angle(angle);
+      num = choose_column(dispense_order, dispense_count, num_dispensed);
+      my_delay(500);
+      get_to_gameboard(side, angle, num, wheels, front_ultra, left_ultra, right_ultra);
+      dispense(num_dispensed, front_ultra, wheels, 75);
+      my_delay(500);
+    }
+      
     int ball_dispensed = 22-(num_ball_L + num_ball_R + num_ball_CL + num_ball_CR);
     int hopper = hopper_array[ball_count+ball_dispensed];
     
@@ -125,7 +139,7 @@ void loop() {
     update_angle(angle);
     Serial.println(angle);
     Serial.print("Choose column: ");
-    int num = choose_column(dispense_order, dispense_count, num_dispensed);
+    num = choose_column(dispense_order, dispense_count, num_dispensed);
     Serial.println(num);
     my_delay(500);
     Serial.println("Get to Gameboard");
