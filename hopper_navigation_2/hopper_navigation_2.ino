@@ -1,7 +1,7 @@
 #include "Wheels.h"
 #include "Encoder.h"
 #include "constants.h"
-#include "hopper.h"
+#include "grid.h"
 #include "Ultrasonic.h"
 
 
@@ -35,69 +35,37 @@ void setup(){
 }
 
 void loop(){
-  //int ball_dispensed = 0;/*22-(num_ball_L + num_ball_R + num_ball_CL + num_ball_CR);*/
-  /*backward_align(MyWheel);
+  int ball_dispensed = 22-(num_ball_L + num_ball_R + num_ball_CL + num_ball_CR);
   int hopper = hopper_array[ball_count+ball_dispensed];
   Serial.print("go to hopper #");
   Serial.println(hopper);
+  
   //Reset to origin
-  if ((hopper % 2) == 0)  
-  {
-    //right board
-    MyWheel.Pivot_R(90); 
-    while(num_turn != 2){
-    i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, 1, 3);
-    }
-    num_turn = 0;
-    MyWheel.Pivot_L(180);
-    Serial.println("at the origin");     
-  }
-  else if( (hopper%2) != 0)
-  {
-    //left board
-    MyWheel.Pivot_L(90);
-    while(num_turn != 2){
-    i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, 1, 3);
-    }
-    num_turn = 0;
-    MyWheel.Pivot_L(180);
-    Serial.println("at the origin"); 
-  }
+  reset_origin(MyWheel, hopper, &num_inter, &num_turn);
   
   //Navigate to the hopper
-  while(num_turn != 2){
-    switch(hopper)
-      {
-        case 1:
-          // the left center hopper
-          i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, CL_X_val, CL_Y_val);
-          break;
-        case 2:
-          // the right center hopper
-          i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, CR_X_val, CR_Y_val);
-          break;
-        case 3:
-          // the left side hopper
-          i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, L_X_val, L_Y_val);
-          break;
-        case 4:
-          // the right side hopper
-          i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, R_X_val, R_Y_val);
-          break;
-      }
-  }
-  num_turn = 0;
-  int turning = choose_angle(hopper, angle_L, angle_R, angle_CL, angle_CR);
-  MyWheel.Pivot_R(turning);
+  switch(hopper)
+    {
+      case 1:
+        // the left center hopper
+        i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, CL_X_val, CL_Y_val, angle_CL);
+        break;
+      case 2:
+        // the right center hopper
+        i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, CR_X_val, CR_Y_val, angle_CR);
+        break;
+      case 3:
+        // the left side hopper
+        i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, L_X_val, L_Y_val, angle_L);
+        break;
+      case 4:
+        // the right side hopper
+        i_hopper_navigation(MyWheel, hopper, &num_inter, &num_turn, R_X_val, R_Y_val, angle_R);
+        break;
+    }
   ball_count++;
   Serial.print("number of ball dispensed: ");
   Serial.println(ball_count);
-  MyWheel.Stop();*/
-  while(num_turn != 2){
-    i_hopper_navigation(MyWheel, 2, &num_inter, &num_turn, CL_X_val, CL_Y_val);
-    }
-  while(1){
-  MyWheel.Stop();}
 }
 
 void doEncoder_L_A() {MyWheel.encoder.update_L_A();}
