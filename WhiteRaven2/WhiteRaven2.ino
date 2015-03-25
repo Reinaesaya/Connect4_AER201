@@ -65,13 +65,12 @@ void setup() {
 
 
 void loop(){
-  
     float angle = 135;
     //Serial.println("Get to Hopper");
     //get_to_hopper_pos(wheels, hoppers[hopper_order[num_dispensed]], front_ultra, right_ultra, left_ultra, angle);
-    Serial.println("GetBall");
-    getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
-    my_delay(500);
+    //Serial.println("GetBall");
+    //getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
+    //my_delay(500);
     Serial.println("Update Angle");
     update_angle(angle);
     Serial.print("Choose column: ");

@@ -14,6 +14,7 @@ void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasoni
   stepper.step(STEPPER_NSTEPS);
     my_delay(1000);
   Serial.println("Forward");
+  //ForwardtillStop(wheels, BALL_GRAB_SPD);
   wheels.Forward(BALL_GRAB_SPD, HOPPER_FORWARD_TICK);
     my_delay(1000);
   Serial.println("Back");
@@ -32,6 +33,22 @@ void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasoni
   Serial.println("Up");
   stepper.step(-STEPPER_NSTEPS);
     my_delay(1000);
+}
+
+void ForwardtillStop(Wheels& wheels, int SPD)
+{
+  interrupts();
+  signed long int lastleftwheel = wheels.encoder.getPosLeft();
+  signed long int lastrightwheel = wheels.encoder.getPosRight();
+  wheels.Forward(SPD);
+  my_delay(100);
+  while ((lastleftwheel < wheels.encoder.getPosLeft()) && (lastrightwheel < wheels.encoder.getPosRight()))
+  {
+    wheels.Forward(SPD);
+    my_delay(10);
+  }
+  wheels.Stop();
+  noInterrupts();
 }
 
 int choose_column(int *dispense_order, int *dispense_count, int num_dispensed)

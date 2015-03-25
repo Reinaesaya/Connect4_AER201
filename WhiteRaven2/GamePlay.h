@@ -6,6 +6,7 @@
 #include <Stepper.h>
 
 void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasonic& front_US);
+void ForwardtillStop(Wheels& wheels, int SPD);
 
 int choose_column(int *dispense_order, int *dispense_count, int num_dispensed);
 

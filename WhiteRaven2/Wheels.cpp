@@ -21,10 +21,24 @@ Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
 
 void Wheels::Forward(int SPD)
 {
-  analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
+  interrupts();
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
+  if (encoder.getPosLeft() > encoder.getPosRight() + 1000)
+  {
+    analogWrite(left_motor_f, 0);
+    analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
+  }
+  else if (encoder.getPosRight() > encoder.getPosLeft() + 1000)
+  {
+    analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_f, 0);
+  }
+  else
+  {
+    analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
+  }
   digitalWrite(enable_pin, HIGH);
 }
 
@@ -40,10 +54,24 @@ void Wheels::Forward(int SPD, signed long int ticks)
 
 void Wheels::Backward(int SPD)
 {
+  interrupts();
   analogWrite(left_motor_f, 0);
-  analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, 0);
-  analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
+  if (encoder.getPosLeft() < encoder.getPosRight() - 1000)
+  {
+    analogWrite(left_motor_b, 0);
+    analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
+  }
+  else if (encoder.getPosRight() < encoder.getPosLeft() - 1000)
+  {
+    analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_b, 0);
+  }
+  else
+  {
+    analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
+    analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
+  }
   digitalWrite(enable_pin, HIGH);
 }
 
@@ -95,6 +123,7 @@ void Wheels::Pivot_R(float angle)
 
 void Wheels::Turn_L(unsigned long millisec, int inner, int outer)
 {
+  encoder.reset();
   analogWrite(left_motor_f, inner + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, outer + RIGHT_MOTOR_OFFSET);
@@ -106,6 +135,7 @@ void Wheels::Turn_L(unsigned long millisec, int inner, int outer)
 
 void Wheels::Turn_R(unsigned long millisec, int inner, int outer)
 {
+  encoder.reset();
   analogWrite(left_motor_f, outer + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, inner + RIGHT_MOTOR_OFFSET);
@@ -117,6 +147,7 @@ void Wheels::Turn_R(unsigned long millisec, int inner, int outer)
 
 void Wheels::Back_L(unsigned long millisec, int inner, int outer)
 {
+  encoder.reset();
   analogWrite(left_motor_f, 0);
   analogWrite(left_motor_b, inner + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, 0);
@@ -128,6 +159,7 @@ void Wheels::Back_L(unsigned long millisec, int inner, int outer)
 
 void Wheels::Back_R(unsigned long millisec, int inner, int outer)
 {
+  encoder.reset();
   analogWrite(left_motor_f, 0);
   analogWrite(left_motor_b, outer + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, 0);
@@ -139,6 +171,7 @@ void Wheels::Back_R(unsigned long millisec, int inner, int outer)
 
 void Wheels::Stop()
 { // Complete restart, not just pause
+  encoder.reset();
   analogWrite(left_motor_f, 0);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, 0);
