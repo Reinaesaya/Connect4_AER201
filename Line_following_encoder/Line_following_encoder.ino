@@ -6,7 +6,6 @@
 
 Encoder encoder(L_ENC_PINA,L_ENC_PINB,R_ENC_PINA,R_ENC_PINB);
 DiffSteering MyWheel(WHEEL_ENABLE,LEFT_WHEEL_F,LEFT_WHEEL_B,RIGHT_WHEEL_F,RIGHT_WHEEL_B,encoder);
-Ultrasonic ultrasonic(22,23);
 
 
 int x_val;
@@ -48,14 +47,9 @@ Serial.println("input x coordinate: ");
 
 
 void loop(){
-  long obj_range = ultrasonic.Ranging(CM);
-  Serial.println(obj_range);
-  delay(1000);
-  shift_add(range_array, 5, obj_range);
-  while (us_check(range_array, 5, 35) == 1 ){
+
     line_following(Lsensor, Rsensor, PLsensor, PRsensor);
-   }
-  MyWheel.Backward(50);
+
 }
 
 void doEncoder_L_A() {MyWheel.encoder.update_L_A();}

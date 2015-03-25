@@ -10,8 +10,13 @@ the robot from crashing into the walls.
 #include "Diff_steer.h"
 #include <Stepper.h>
 
+<<<<<<< HEAD
+#define STEPPER_SPEED 60
+#define STEPPER_STEPS 150
+=======
 #define STEPPER_SPEED 30
 #define STEPPER_STEPS 200
+>>>>>>> c719321df46808f03d54ef9cae3f6429260e7b27
 
 /*Instantiate stepper*/
 
@@ -37,16 +42,23 @@ void setup() {
 
 void loop()
 {
-  long obj_range_1 = ultrasonic1.Ranging(CM);
-  shift_add(range_array_1, 5, obj_range_1);
+  //long obj_range_1 = ultrasonic1.Ranging(CM);
+  //shift_add(range_array_1, 5, obj_range_1);
   
-  if (check_array(range_array_1, 5, 35) == 1) {
+  //if (check_array(range_array_1, 5, 35) == 1) {
     getBall(diffsteering, stepper);
+<<<<<<< HEAD
+  //}
+  //else {
+    //diffsteering.Forward(90);
+  //}
+=======
     while (true) continue;
   }
   else {
     //diffsteering.Forward(90);
   }
+>>>>>>> c719321df46808f03d54ef9cae3f6429260e7b27
   delay(10);
 }
 
@@ -57,6 +69,19 @@ void getBall(DiffSteering wheels, Stepper stepper) {
     Serial.println("Down");
       stepper.step(STEPPER_STEPS);
       delay(1000);
+<<<<<<< HEAD
+    //Serial.println("Forward");
+      //diffsteering.Forward(90);
+      //delay(2000);
+      //diffsteering.Stop();
+      //delay(1000);
+    //Serial.println("Side");
+      //diffsteering.Turn_R(750, 0, 90);
+      //diffsteering.Stop();
+      //delay(2000);
+    //Serial.println("Backward");
+     // diffsteering.Backward(90);
+=======
     Serial.println("Forward");
       //diffsteering.Forward(90);
       delay(2000);
@@ -68,6 +93,7 @@ void getBall(DiffSteering wheels, Stepper stepper) {
       delay(2000);
     Serial.println("Backward");
       //diffsteering.Backward(90);
+>>>>>>> c719321df46808f03d54ef9cae3f6429260e7b27
       //delay(2000);
       //diffsteering.Stop();
     Serial.println("Up");

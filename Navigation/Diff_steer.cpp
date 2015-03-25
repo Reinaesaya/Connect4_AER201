@@ -23,6 +23,7 @@ DiffSteering::DiffSteering( // Constructor
 
 void DiffSteering::Forward(int SPD)
 {
+  Serial.println("Forward");
   analogWrite(left_motor_f, SPD);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, SPD);

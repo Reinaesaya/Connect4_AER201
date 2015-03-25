@@ -55,8 +55,13 @@
 
 // Ball grabbing parameters
 #define STEPPER_SPEED 60
+<<<<<<< HEAD
+#define STEPPER_NSTEPS 175
+#define HOPPER_STOP_DIST 20
+=======
 #define STEPPER_NSTEPS 180
 #define HOPPER_STOP_DIST 35
+>>>>>>> 3501a8c6706dfa9455c81bed2fa86745f0df5852
 #define HOPPER_FORWARD_TICK 40000
 #define BALL_GRAB_SPD 125
 #define BACK_TURN_MILLI 1200

@@ -19,6 +19,8 @@ void line_following(Wheels& MyWheel);
 void i_hopper_navigation(Wheels& MyWheel, byte mode, byte *num_inter, byte *num_turn, byte x_val, byte y_val);
 void go_to_origin(Wheels& MyWheel);
 void backward_align(Wheels& MyWheel);
+void first_turn(Wheels& MyWheel,  byte *num_inter, byte *num_turn, byte mode, byte x_val, byte y_val);
+
 
 /* GENERAL HELPER FUNCTIONS*/
 void shift_add(long* arr, int length, long b);
