@@ -29,6 +29,7 @@ int check_array(long* arr, long thresh)
     if (arr[i] >= thresh) ret = 0;
   }
   //Serial.print("\n");
+  //Serial.println(arr[ARRAY_LEN-1]);
   return ret;
 }
 int check_array(int* arr, int thresh)

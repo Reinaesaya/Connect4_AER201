@@ -35,8 +35,8 @@
 
 // Wheel movements
 #define LEFT_MOTOR_OFFSET 0
-#define RIGHT_MOTOR_OFFSET 50
-#define PIVOT_SPEED 75
+#define RIGHT_MOTOR_OFFSET 60
+#define PIVOT_SPEED 100
 
 // Ultrasonic sensor pins
 #define FRONT_TRIG 22
@@ -60,7 +60,7 @@
 #define HOPPER_FORWARD_TICK 40000
 #define BALL_GRAB_SPD 125
 #define BACK_TURN_MILLI 1200
-#define BACK_INNER_SPD 60
+#define BACK_INNER_SPD 55
 #define BACK_OUTER_SPD 150
 
 // Wall following parameters
@@ -97,7 +97,7 @@
 
 #define WALL_FIND_SPEED 100
 #define WALL_FOLLOW_SPEED 100
-#define SIDE_WALL_FOLLOW_DIST 20
+#define SIDE_WALL_FOLLOW_DIST 25
 #define GAMEBOARD_WALL_FOLLOW_DIST 40
 
 #define MIN_DIST_DISPENSE 20

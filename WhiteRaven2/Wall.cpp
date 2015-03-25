@@ -92,7 +92,7 @@ void forward_to_dist(long stop_dist, Wheels& wheels, Ultrasonic& front_US, int S
     wheels.Forward(SPD);
   }
   wheels.Stop();
-  my_delay(1000);
+  my_delay(250);
 }
 
 void forward_to_dist_wall(int side, long stop_dist, long wall_dist, Wheels& wheels, Ultrasonic& front_US, Ultrasonic& side_US, int SPD)
@@ -110,12 +110,14 @@ void forward_to_dist_wall(int side, long stop_dist, long wall_dist, Wheels& whee
     loops++;
   }
   wheels.Stop();
+  my_delay(250);
 }
 
 void find_wall_and_position(int side, float& angle, Wheels& wheels, Ultrasonic& front_US)
 // Finds the wall, navigates to it, and positions robot along the wall ready to move towards gameboard
 // Changes angle to that its facing (towards gameboard)
 {
+  Serial.println("Find Wall");
   if (side == LEFT_BOARD)
   {
     if (angle <= 180) { wheels.Pivot_R(angle); }
@@ -137,27 +139,26 @@ void get_to_gameboard(int side, float& angle, int game_column, Wheels& wheels, U
 // Navigate to gameboard and positions to selected column position
 {
   find_wall_and_position(side, angle, wheels, front_US);
+  Serial.println("Along side wall towards gameboard");
   if (side == LEFT_BOARD)
   {
-    long follow_dist = get_current_dist(left_US);
-    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, follow_dist, wheels,
+    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_R(90);
-    follow_dist = get_current_dist(left_US);
+    Serial.println("Along front wall");
     long stop_dist = (long)((-1)*(((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
-    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, follow_dist, wheels,
+    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_L(90);
   }
   else if (side == RIGHT_BOARD)
   {
-    long follow_dist = get_current_dist(right_US);
-    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, follow_dist, wheels,
+    forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_L(90);
-    follow_dist = get_current_dist(right_US);
+    Serial.println("Along front wall");
     long stop_dist = (long)((((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
-    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, follow_dist, wheels,
+    forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
     wheels.Pivot_R(90);
   }

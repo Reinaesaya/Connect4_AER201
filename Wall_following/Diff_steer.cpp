@@ -25,7 +25,7 @@ void DiffSteering::Forward(int SPD)
 {
   analogWrite(left_motor_f, SPD);
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, SPD);
+  analogWrite(right_motor_f, SPD+50);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
 }
@@ -68,7 +68,7 @@ void DiffSteering::Turn_L(int millisec, int inner, int outer)
   Serial.println("Turn Left");
   analogWrite(left_motor_f, inner); // Arbitrary speed
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, outer);
+  analogWrite(right_motor_f, outer+50);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
   delay(millisec); // Arbitrary estimation of time
@@ -80,7 +80,7 @@ void DiffSteering::Turn_R(int millisec, int inner, int outer)
   Serial.println("Turn Right");
   analogWrite(left_motor_f, outer); // Arbitrary speed
   analogWrite(left_motor_b, 0);
-  analogWrite(right_motor_f, inner);
+  analogWrite(right_motor_f, inner+50);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
   delay(millisec); // Arbitrary estimation of time

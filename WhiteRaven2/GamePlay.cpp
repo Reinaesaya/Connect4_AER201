@@ -20,12 +20,14 @@ void getBall(int side, float& angle, Wheels& wheels, Stepper& stepper, Ultrasoni
   Serial.println("Back");
   if (side == LEFT_BOARD)
   {
-    wheels.Back_L(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
+    wheels.Back_L_Angle(45, BACK_INNER_SPD, BACK_OUTER_SPD);
+    //wheels.Back_L(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
     angle = angle - 45;
   }
   else if (side == RIGHT_BOARD)
   {
-    wheels.Back_R(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
+    wheels.Back_R_Angle(45, BACK_INNER_SPD, BACK_OUTER_SPD);
+    //wheels.Back_R(BACK_TURN_MILLI, BACK_INNER_SPD, BACK_OUTER_SPD);
     angle = angle + 45;
   }
     my_delay(1000);
@@ -80,6 +82,7 @@ void dispense(int& num_dispensed, Ultrasonic& front_US, Wheels wheels, int SPD)
     wheels.Backward(SPD);
   }
   wheels.Stop();
+  my_delay(250);
   num_dispensed++;
 }
 

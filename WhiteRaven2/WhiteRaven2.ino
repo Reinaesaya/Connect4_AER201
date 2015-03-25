@@ -64,25 +64,26 @@ void setup() {
 }
 
 
-void loop(){
-    float angle = 135;
+void loop() {
+    float angle = 270;
     //Serial.println("Get to Hopper");
     //get_to_hopper_pos(wheels, hoppers[hopper_order[num_dispensed]], front_ultra, right_ultra, left_ultra, angle);
-    //Serial.println("GetBall");
-    //getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
-    //my_delay(500);
+    Serial.println("GetBall");
+    getBall(hoppers[hopper_order[num_dispensed]].side, angle, wheels, stepper, front_ultra);
+    my_delay(500);
     Serial.println("Update Angle");
     update_angle(angle);
-    Serial.print("Choose column: ");
-    int num = choose_column(dispense_order, dispense_count, num_dispensed);
-    Serial.println(num);
-    my_delay(500);
-    Serial.println("Get to Gameboard");
-    get_to_gameboard(hoppers[hopper_order[num_dispensed]].side, angle, num, wheels, front_ultra, left_ultra, right_ultra);
-    Serial.println("Dispense");
-    dispense(num_dispensed, front_ultra, wheels, 75);
-    my_delay(500);
-    get_to_origin_from_gameboard(wheels, hoppers[hopper_order[num_dispensed]]);
+    Serial.println(angle);
+    //Serial.print("Choose column: ");
+    //int num = choose_column(dispense_order, dispense_count, num_dispensed);
+    //Serial.println(num);
+    //my_delay(500);
+    //Serial.println("Get to Gameboard");
+    //get_to_gameboard(hoppers[hopper_order[num_dispensed]].side, angle, num, wheels, front_ultra, left_ultra, right_ultra);
+    //Serial.println("Dispense");
+    //dispense(num_dispensed, front_ultra, wheels, 75);
+    //my_delay(500);
+    //get_to_origin_from_gameboard(wheels, hoppers[hopper_order[num_dispensed]]);
     while (true)
     {
       continue;
