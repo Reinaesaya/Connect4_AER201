@@ -36,10 +36,17 @@ void loop()
   //shift_add(range_array, 5, obj_range);
   //Serial.println(obj_range);
   //if (check_array(range_array, 5, 40) == 1) {
+<<<<<<< HEAD
   //  diffsteering.Forward(100);
   //}
   //else {
     diffsteering.Forward(200);
+=======
+  //  diffsteering.Forward(90);
+  //}
+  //else {
+    diffsteering.Forward(150);
+>>>>>>> c719321df46808f03d54ef9cae3f6429260e7b27
   //}
   delay(10);
 }

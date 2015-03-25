@@ -21,10 +21,10 @@ int Fsensor, Bsensor, Lsensor, Rsensor, PLsensor, PRsensor;
 
 void setup(){
   Serial.begin(9600);
-  //init_white_raven(&L_X_val,&L_Y_val,&num_ball_L,&angle_L);
-  //init_white_raven(&R_X_val,&R_Y_val,&num_ball_R,&angle_R);
+  init_white_raven(&L_X_val,&L_Y_val,&num_ball_L,&angle_L);
+  init_white_raven(&R_X_val,&R_Y_val,&num_ball_R,&angle_R);
   init_white_raven(&CL_X_val,&CL_Y_val,&num_ball_CL,&angle_CL);
-  //init_white_raven(&CR_X_val,&CR_Y_val,&num_ball_CR,&angle_CR); 
+  init_white_raven(&CR_X_val,&CR_Y_val,&num_ball_CR,&angle_CR); 
   ball_count = 0;
   attachInterrupt(L_ENC_PINA_INT, doEncoder_L_A, CHANGE);
   attachInterrupt(L_ENC_PINB_INT, doEncoder_L_B, CHANGE);
