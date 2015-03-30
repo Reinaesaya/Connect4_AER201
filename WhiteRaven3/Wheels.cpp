@@ -21,11 +21,18 @@ Wheels::Wheels(int EN, int LM_F, int LM_B, int RM_F, int RM_B, Encoder& E) :
 
 void Wheels::Forward(int SPD)
 {
+  interrupts();
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_b, 0);
   analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
   analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
   digitalWrite(enable_pin, HIGH);
+  Serial.println("LEFT ENCODER POS");
+  Serial.println(encoder.getPosLeft());
+  Serial.println("RIGHT ENCODER POS");
+  Serial.println(encoder.getPosRight());
+  delay(10);
+  noInterrupts();
 }
 
 void Wheels::Forward_straight(int SPD)
@@ -39,7 +46,7 @@ void Wheels::Forward_straight(int SPD)
     analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
     my_delay(10);
   }
-  else if (encoder.getPosRight() > encoder.getPosLeft() + 1000)
+  else if (encoder.getPosRight() > encoder.getPosLeft() + 250)
   {
     analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
     analogWrite(right_motor_f, 0);
@@ -150,24 +157,36 @@ void Wheels::Pivot_R(float angle)
 
 void Wheels::Turn_L(unsigned long millisec, int inner, int outer)
 {
-  encoder.reset();
+  //Serial.println("Turn_L");
+  interrupts();
   analogWrite(left_motor_f, inner + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, outer + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
+  Serial.println("LEFT ENCODER POS");
+  Serial.println(encoder.getPosLeft());
+  Serial.println("RIGHT ENCODER POS");
+  Serial.println(encoder.getPosRight());
+  noInterrupts();
   my_delay(millisec);
   this->Stop();
 }
 
 void Wheels::Turn_R(unsigned long millisec, int inner, int outer)
 {
-  encoder.reset();
+  //Serial.println("Turn_R");
+  interrupts();
   analogWrite(left_motor_f, outer + LEFT_MOTOR_OFFSET);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, inner + RIGHT_MOTOR_OFFSET);
   analogWrite(right_motor_b, 0);
   digitalWrite(enable_pin, HIGH);
+  Serial.println("LEFT ENCODER POS");
+  Serial.println(encoder.getPosLeft());
+  Serial.println("RIGHT ENCODER POS");
+  Serial.println(encoder.getPosRight());
+  noInterrupts();
   my_delay(millisec);
   this->Stop();
 }
@@ -240,7 +259,7 @@ void Wheels::Back_R_Angle(float angle, int inner, int outer)
 
 void Wheels::Stop()
 { // Complete restart, not just pause
-  encoder.reset();
+  //encoder.reset();
   analogWrite(left_motor_f, 0);
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_f, 0);

@@ -1,5 +1,5 @@
-#ifndef HOPPER_H
-#define HOPPER_H
+#ifndef GRID_H
+#define GRID_H
 
 #include "Wheels.h"
 #include "Encoder.h"

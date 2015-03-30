@@ -37,24 +37,24 @@ void init_white_raven(byte *x_val, byte *y_val, byte *num_ball, int *angle){
 
  
 void i_hopper_navigation(Wheels& MyWheel, byte mode, byte *num_inter, byte *num_turn, byte x_val, byte y_val,int angle){
-  int PRsensor = analogRead(9);
-  int PLsensor = analogRead(8); 
-  Serial.print("reading values:  ");
-  Serial.print(PRsensor);
-  Serial.print(' ');
-  Serial.println(PLsensor);
-  Serial.print("reference values: ");
-  Serial.print(MaxPR);
-  Serial.print(' ');
-  Serial.println(MaxPL); 
   while(*num_turn != 2)
   {
+    int PRsensor = analogRead(9);
+    int PLsensor = analogRead(8); 
+    Serial.print("reading values:  ");
+    Serial.print(PRsensor);
+    Serial.print(' ');
+    Serial.println(PLsensor);
+    Serial.print("reference values: ");
+    Serial.print(MaxPR);
+    Serial.print(' ');
+    Serial.println(MaxPL); 
     if (y_val == 0)
     {
       first_turn(MyWheel, num_inter, num_turn, mode, x_val, y_val);
     }
     else if((PRsensor < (MaxPR+50)) && (PLsensor < (MaxPL +50)))  line_following(MyWheel);
-    else if (PRsensor > (MaxPR+100) || PLsensor > (MaxPL +100) )
+    else if (PRsensor > (MaxPR+100) || PLsensor > (MaxPL +100))
     {  // @the intersection
     
         //double check the sensors
@@ -108,7 +108,7 @@ void i_hopper_navigation(Wheels& MyWheel, byte mode, byte *num_inter, byte *num_
         }
         else
         {
-          MyWheel.Forward(75);
+          MyWheel.Forward(50);
           Serial.println("5");        
         }
       }
@@ -169,10 +169,7 @@ void reset_origin(Wheels& MyWheel, byte hopper, byte *num_inter, byte *num_turn)
   {
     //right board
     MyWheel.Pivot_R(90); 
-    while(*num_turn != 2){
     i_hopper_navigation(MyWheel, hopper, num_inter, num_turn, 1, 3, 0);
-    }
-    num_turn = 0;
     MyWheel.Pivot_L(180);
     Serial.println("at the origin");     
   }
@@ -180,10 +177,7 @@ void reset_origin(Wheels& MyWheel, byte hopper, byte *num_inter, byte *num_turn)
   {
     //left board
     MyWheel.Pivot_L(90);
-    while(*num_turn != 2){
     i_hopper_navigation(MyWheel, hopper, num_inter, num_turn, 1, 3, 0);
-    }
-    num_turn = 0;
     MyWheel.Pivot_L(180);
     Serial.println("at the origin"); 
   }
@@ -215,7 +209,7 @@ void line_following(Wheels& MyWheel){
   }
     else 
   {
-    MyWheel.Forward(75);
+    MyWheel.Forward(50);
     Serial.println("6");
   }
 }

@@ -77,12 +77,12 @@ void dispense(int& num_dispensed, Ultrasonic& front_US, Wheels wheels, int SPD)
   
   my_delay(1000);
   
-  while (check_array(front_US.array, (long)BACK_UP_DISPENSE_DIST) == 1) {
+  /*while (check_array(front_US.array, (long)BACK_UP_DISPENSE_DIST) == 1) {
     front_US.update_array();
     wheels.Backward(SPD);
   }
   wheels.Stop();
-  my_delay(250);
+  my_delay(250);*/
   num_dispensed++;
 }
 

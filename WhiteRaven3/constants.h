@@ -24,8 +24,8 @@
 #define L_ENC_PINA_INT 4
 #define L_ENC_PINB_INT 5
 
-#define TICKS_PER_90_DEG 82050
-
+#define TICKS_PER_90_DEG 81243
+#define TICKS_PER_GRID 65700
 // Wheel pins
 #define WHEEL_ENABLE 13
 #define LEFT_WHEEL_F 12
@@ -35,7 +35,7 @@
 
 // Wheel movements
 #define LEFT_MOTOR_OFFSET 0
-#define RIGHT_MOTOR_OFFSET 60
+#define RIGHT_MOTOR_OFFSET 15
 #define PIVOT_SPEED 100
 
 // Ultrasonic sensor pins
@@ -55,13 +55,8 @@
 
 // Ball grabbing parameters
 #define STEPPER_SPEED 60
-//<<<<<<< HEAD
-#define STEPPER_NSTEPS 175
-#define HOPPER_STOP_DIST 20
-//=======
 #define STEPPER_NSTEPS 180
-#define HOPPER_STOP_DIST 35
-//>>>>>>> 3501a8c6706dfa9455c81bed2fa86745f0df5852
+#define HOPPER_STOP_DIST 30
 #define HOPPER_FORWARD_TICK 40000
 #define BALL_GRAB_SPD 125
 #define BACK_TURN_MILLI 1200
@@ -70,11 +65,11 @@
 
 // Wall following parameters
 #define ARRAY_LEN 6
-#define ADJUSTMENT_MILLIS 20
-#define STRAIGHT_ADJ_INNER 100
-#define STRAIGHT_ADJ_OUTER 150
-#define DIST_ADJ_INNER 100
-#define DIST_ADJ_OUTER 150
+#define ADJUSTMENT_MILLIS 10
+#define STRAIGHT_ADJ_INNER 50
+#define STRAIGHT_ADJ_OUTER 100
+#define DIST_ADJ_INNER 50
+#define DIST_ADJ_OUTER 100
 
 // Infrared sensor pins
 #define FRONT_FRONT 15
@@ -90,23 +85,24 @@
 #define MAX_WHITE_B_R 46
 #define MAX_WHITE_B_L 47
 #define B_W_THRESH 100
+#define LINE_FOLLOW_ADJUST 150
 
 // Navigation parameters
 #define LEFT_BOARD 0
 #define RIGHT_BOARD 1
 
-#define LINE_FOLLOW_SPEED 100
-#define LINE_FOLLOW_FORWARD_TICK_OFFSET 5000
+#define LINE_FOLLOW_SPEED 75
+#define LINE_FOLLOW_FORWARD_TICK_OFFSET 7000
 #define LEFT_TURN 0
 #define RIGHT_TURN 1
 
-#define WALL_FIND_SPEED 100
-#define WALL_FOLLOW_SPEED 100
-#define SIDE_WALL_FOLLOW_DIST 25
-#define GAMEBOARD_WALL_FOLLOW_DIST 40
+#define WALL_FIND_SPEED 75
+#define WALL_FOLLOW_SPEED 75
+#define SIDE_WALL_FOLLOW_DIST 15
+#define GAMEBOARD_WALL_FOLLOW_DIST 25
 
-#define MIN_DIST_DISPENSE 20
-#define BACK_UP_DISPENSE_DIST 30
+#define MIN_DIST_DISPENSE 10
+#define BACK_UP_DISPENSE_DIST 25
 
 // Hopper parameters
 
@@ -116,5 +112,16 @@
 #define FLAT_DOWN 1
 #define CLOSE_CENTER 0
 #define FAR_CENTER 1
+
+
+// Keypad pins
+#define ROW_PIN_D 34
+#define ROW_PIN_C 35
+#define ROW_PIN_B 36
+#define ROW_PIN_A 37
+#define COL_PIN_D 38
+#define COL_PIN_C 39
+#define COL_PIN_B 40
+#define COL_PIN_A 41
 
 #endif
