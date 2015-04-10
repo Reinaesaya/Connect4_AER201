@@ -11,7 +11,7 @@
 // Playfield Dimensions
 #define GRID_SPACING 20
 #define GAMEBOARD_COL_SPACING 2
-#define GAMEBOARD_CENTER_FROM_WALL 94
+#define GAMEBOARD_CENTER_FROM_WALL 103
 
 // Encoders pins and interrupts
 #define R_ENC_PINA 21
@@ -35,23 +35,23 @@
 
 // Wheel movements
 #define LEFT_MOTOR_OFFSET 0
-#define RIGHT_MOTOR_OFFSET 0
-#define PIVOT_SPEED 75
+#define RIGHT_MOTOR_OFFSET 55
+#define PIVOT_SPEED 100
 
 // Ultrasonic sensor pins
-#define FRONT_TRIG 24
-#define FRONT_ECHO 25
-#define LEFT_TRIG 26
-#define LEFT_ECHO 27
-#define RIGHT_TRIG 30
-#define RIGHT_ECHO 31
+#define FRONT_TRIG 22
+#define FRONT_ECHO 23
+#define LEFT_TRIG 24
+#define LEFT_ECHO 25
+#define RIGHT_TRIG 26
+#define RIGHT_ECHO 27
 
 // Stepper motor parameters and pins
 #define STEPPER_STEPS 48
 #define STEPPER_1 8
-#define STEPPER_2 6
-#define STEPPER_3 4
-#define STEPPER_4 2
+#define STEPPER_2 7
+#define STEPPER_3 6
+#define STEPPER_4 5
 
 // Ball grabbing parameters
 #define STEPPER_SPEED 60
@@ -66,10 +66,10 @@
 // Wall following parameters
 #define ARRAY_LEN 6
 #define ADJUSTMENT_MILLIS 20
-#define STRAIGHT_ADJ_INNER 85
-#define STRAIGHT_ADJ_OUTER 175
-#define DIST_ADJ_INNER 20
-#define DIST_ADJ_OUTER 175
+#define STRAIGHT_ADJ_INNER 75
+#define STRAIGHT_ADJ_OUTER 150
+#define DIST_ADJ_INNER 75
+#define DIST_ADJ_OUTER 150
 
 // Infrared sensor pins
 #define FRONT_FRONT 15
@@ -90,17 +90,17 @@
 #define LEFT_BOARD 0
 #define RIGHT_BOARD 1
 
-#define LINE_FOLLOW_SPEED 90
+#define LINE_FOLLOW_SPEED 100
 #define LINE_FOLLOW_FORWARD_TICK_OFFSET 10900
 #define LEFT_TURN 0
 #define RIGHT_TURN 1
 
 #define WALL_FIND_SPEED 150
-#define WALL_FOLLOW_SPEED 125
-#define SIDE_WALL_FOLLOW_DIST 15
-#define GAMEBOARD_WALL_FOLLOW_DIST 27
+#define WALL_FOLLOW_SPEED 200
+#define SIDE_WALL_FOLLOW_DIST 20
+#define GAMEBOARD_WALL_FOLLOW_DIST 25
 
-#define MIN_DIST_DISPENSE 6
+#define MIN_DIST_DISPENSE 10
 #define BACK_UP_DISPENSE_DIST 25
 
 // Hopper parameters

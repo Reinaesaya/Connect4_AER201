@@ -7,17 +7,18 @@
 
 void getBallcorner(Wheels& wheels, Stepper& stepper)
 {
-  wheels.Pivot_L(6);
+  wheels.Pivot_L(5);
   my_delay(500);
   interrupts();
   stepper.step(STEPPER_NSTEPS);
   my_delay(500);
   noInterrupts();
-  wheels.Forward(125,54000);
-  wheels.Pivot_R(10,200);
-  wheels.Forward(150);
-  my_delay(500);
-  wheels.Pivot_R(10,200);
+  wheels.Forward(100,50000);
+  my_delay(250);
+  wheels.Pivot_R(10);
+  wheels.Forward(200);
+  my_delay(2000);
+  wheels.Pivot_R(15);
   wheels.Backward(150,50000);
   my_delay(500);
   interrupts();
@@ -95,7 +96,7 @@ int choose_column(int *dispense_order, int *dispense_count, int num_dispensed)
   int chosen;
   if (dispense_order[num_dispensed] == 0)
   {
-    chosen = random(3,6);
+    chosen = random(1,8);
     while (dispense_count[chosen-1] >= 5) { chosen = random(1,8); }
   }
   else { chosen = dispense_order[num_dispensed]; }
@@ -127,23 +128,19 @@ void dispense(int& num_dispensed, Ultrasonic& front_US, Wheels wheels, int SPD)
   front_US.initialize_array();
   while (check_array(front_US.array, (long)MIN_DIST_DISPENSE) != 1) {
     front_US.update_array();
-    wheels.Forward(150);
+    wheels.Forward_straight(SPD);
+    my_delay(50);
     noInterrupts();
   }
   wheels.Stop();
   
-  my_delay(2000);
+  my_delay(1000);
   
-  //backward_align(wheels);
-  wheels.encoder.reset();
-  wheels.Backward(125);
-  my_delay(500);
-  wheels.Stop();
   backward_align(wheels);
-  wheels.encoder.reset();
-  wheels.Forward(100);
+  backward_align(wheels);
+  wheels.Forward(100,5000);
+
   my_delay(250);
-  wheels.Stop();
   num_dispensed++;
 }
 

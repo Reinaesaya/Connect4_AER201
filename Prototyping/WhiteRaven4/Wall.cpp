@@ -37,14 +37,14 @@ void wall_straight_adjust(int side, Ultrasonic& side_US, int SPD, Wheels& wheels
   
   if (side == LEFT_BOARD)
   {
-    if (adjust < (thresh*(-1)))    { wheels.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER); }
-    else if (adjust > thresh)      { wheels.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER); }
+    if (adjust < (thresh*(-1)))    wheels.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
+    else if (adjust > thresh)      wheels.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
     else                           { wheels.Forward(SPD,1000); wheels.encoder.reset(); }
   }
   else if (side == RIGHT_BOARD)
   {
-    if (adjust < (thresh*(-1)))    { wheels.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER); }
-    else if (adjust > thresh)      { wheels.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER); }
+    if (adjust < (thresh*(-1)))    wheels.Turn_L(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
+    else if (adjust > thresh)      wheels.Turn_R(ADJUSTMENT_MILLIS,STRAIGHT_ADJ_INNER,STRAIGHT_ADJ_OUTER);
     else                           { wheels.Forward(SPD,1000); wheels.encoder.reset(); }
   }
 }
@@ -65,15 +65,15 @@ void wall_dist_adjust(int side, Ultrasonic& side_US, long targ, int SPD, Wheels&
   int thresh = ARRAY_LEN - 2;
   if (side == LEFT_BOARD)
   {
-    if (adjust < (thresh*(-1)))    { wheels.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER); }
-    else if (adjust > thresh)      { wheels.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER); }
+    if (adjust < (thresh*(-1)))    wheels.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
+    else if (adjust > thresh)      wheels.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
     else                           { wheels.Forward(SPD,1000); wheels.encoder.reset(); }
   }
   else if (side == RIGHT_BOARD)
   {
-    if (adjust < (thresh*(-1)))    { wheels.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER); }
-    else if (adjust > thresh)      { wheels.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER); }
-    else                           { wheels.Forward(SPD, 1000); wheels.encoder.reset(); }
+    if (adjust < (thresh*(-1)))    wheels.Turn_L(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
+    else if (adjust > thresh)      wheels.Turn_R(ADJUSTMENT_MILLIS,DIST_ADJ_INNER,DIST_ADJ_OUTER);
+    else                           { wheels.Forward(SPD,1000); wheels.encoder.reset(); }
   }
 }
 
@@ -83,10 +83,12 @@ void forward_to_dist(long stop_dist, Wheels& wheels, Ultrasonic& front_US, int S
 // Move robot forward until front sensor hits certain dise
 {
   front_US.initialize_array();
+  my_delay(1000);
+  my_delay(1000);
   while (check_array(front_US.array, stop_dist) != 1)
   {
     front_US.update_array();
-    wheels.Forward(SPD);
+    wheels.Forward(SPD,1000);
   }
   wheels.Stop();
   my_delay(250);
@@ -119,17 +121,17 @@ void find_wall_and_position(int side, float& angle, Wheels& wheels, Ultrasonic& 
   Serial.println("Find Wall");
   if (side == LEFT_BOARD)
   {
-    if (angle <= 180) { wheels.Pivot_R(angle,125); }
-    else if (angle > 180) { wheels.Pivot_L(360-angle, 125); }
+    if (angle <= 180) { wheels.Pivot_R(angle); }
+    else if (angle > 180) { wheels.Pivot_L(360-angle); }
     forward_to_dist(SIDE_WALL_FOLLOW_DIST - TURN_DIFFERENCE, wheels, front_US, WALL_FIND_SPEED);
-    wheels.Pivot_R(80,100);
+    wheels.Pivot_R(90);
   }
   else if (side == RIGHT_BOARD)
   {
-    if (angle <= 180) { wheels.Pivot_L(180-angle, 125); }
-    else if (angle > 180) { wheels.Pivot_L(angle-180, 125); }
+    if (angle <= 180) { wheels.Pivot_L(180-angle); }
+    else if (angle > 180) { wheels.Pivot_L(angle-180); }
     forward_to_dist(SIDE_WALL_FOLLOW_DIST - TURN_DIFFERENCE, wheels, front_US, WALL_FIND_SPEED);
-    wheels.Pivot_L(90,100);
+    wheels.Pivot_L(90);
   }
   angle = 180;
 }
@@ -143,23 +145,23 @@ void get_to_gameboard(int side, float& angle, int game_column, Wheels& wheels, U
   {
     forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
-    wheels.Pivot_R(85,100);
+    wheels.Pivot_R(90);
     Serial.println("Along front wall");
     long stop_dist = (long)((-1)*(((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
     forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
                          front_US, left_US, WALL_FOLLOW_SPEED);
-    wheels.Pivot_L(90,100);
+    wheels.Pivot_L(90);
   }
   else if (side == RIGHT_BOARD)
   {
     forward_to_dist_wall(side, GAMEBOARD_WALL_FOLLOW_DIST - TURN_DIFFERENCE, SIDE_WALL_FOLLOW_DIST, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
-    wheels.Pivot_L(85,100);
+    wheels.Pivot_L(90);
     Serial.println("Along front wall");
     long stop_dist = (long)((((unsigned int)game_column - 4) * GAMEBOARD_COL_SPACING) + GAMEBOARD_CENTER_FROM_WALL);
     forward_to_dist_wall(side, stop_dist - PIVOT_TO_FRONT_US, GAMEBOARD_WALL_FOLLOW_DIST, wheels,
                          front_US, right_US, WALL_FOLLOW_SPEED);
-    wheels.Pivot_R(90,100);
+    wheels.Pivot_R(90);
   }
   angle = 180;
 }

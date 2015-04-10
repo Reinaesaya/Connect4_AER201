@@ -16,8 +16,6 @@ class Wheels
     void Backward(int SPD, signed long int ticks);
     void Pivot_L(float angle);
     void Pivot_R(float angle);
-    void Pivot_L(float angle, int SPD);
-    void Pivot_R(float angle, int SPD);
     void Turn_L(unsigned long millisec, int inner, int outer);
     void Turn_R(unsigned long millisec, int inner, int outer);
     void Back_L(unsigned long millisec, int inner, int outer);

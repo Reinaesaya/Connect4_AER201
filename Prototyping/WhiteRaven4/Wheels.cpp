@@ -34,7 +34,7 @@ void Wheels::Forward_straight(int SPD)
   interrupts();
   analogWrite(left_motor_b, 0);
   analogWrite(right_motor_b, 0);
-  if (encoder.getPosLeft() > encoder.getPosRight() + 250)
+  if (encoder.getPosLeft() > encoder.getPosRight() + 1000)
   {
     analogWrite(left_motor_f, 0);
     analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
@@ -78,13 +78,13 @@ void Wheels::Backward_straight(int SPD)
   interrupts();
   analogWrite(left_motor_f, 0);
   analogWrite(right_motor_f, 0);
-  if (encoder.getPosLeft() < encoder.getPosRight() - 250)
+  if (encoder.getPosLeft() < encoder.getPosRight() - 1000)
   {
     analogWrite(left_motor_b, 0);
     analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
     my_delay(10);
   }
-  else if (encoder.getPosRight() < encoder.getPosLeft() - 250)
+  else if (encoder.getPosRight() < encoder.getPosLeft() - 1000)
   {
     analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
     analogWrite(right_motor_b, 0);
@@ -96,7 +96,6 @@ void Wheels::Backward_straight(int SPD)
     analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
   }
   digitalWrite(enable_pin, HIGH);
-  delay(10);
   noInterrupts();
 }
 
@@ -105,7 +104,7 @@ void Wheels::Backward(int SPD, signed long int ticks)
   interrupts();
   encoder.reset();
   while (((-1)*(encoder.getPosLeft() + encoder.getPosRight())/2) <= ticks)
-  { this->Backward_straight(SPD);  }
+  { this->Backward(SPD);  }
   noInterrupts();
   this->Stop();
 }
@@ -149,48 +148,6 @@ void Wheels::Pivot_R(float angle)
   this->Stop();
   my_delay(250);
 }
-
-
-void Wheels::Pivot_L(float angle, int SPD)
-{
-  Serial.print("Pivot_L: ");
-  Serial.println(angle);
-  interrupts();
-  encoder.reset();
-  while (encoder.getPivotAngle() > ((-1)*angle))
-  {
-    analogWrite(left_motor_f, 0);
-    analogWrite(left_motor_b, SPD + LEFT_MOTOR_OFFSET);
-    analogWrite(right_motor_f, SPD + RIGHT_MOTOR_OFFSET);
-    analogWrite(right_motor_b, 0);
-    digitalWrite(enable_pin, HIGH);
-  }
-  encoder.reset();
-  noInterrupts();
-  this->Stop();
-  my_delay(250);
-}
-
-void Wheels::Pivot_R(float angle, int SPD)
-{
-  Serial.print("Pivot_R: ");
-  Serial.println(angle);
-  interrupts();
-  encoder.reset();
-  while (encoder.getPivotAngle() < angle)
-  {
-    analogWrite(left_motor_f, SPD + LEFT_MOTOR_OFFSET);
-    analogWrite(left_motor_b, 0);
-    analogWrite(right_motor_f, 0);
-    analogWrite(right_motor_b, SPD + RIGHT_MOTOR_OFFSET);
-    digitalWrite(enable_pin, HIGH);
-  }
-  encoder.reset();
-  noInterrupts(); 
-  this->Stop();
-  my_delay(250);
-}
-
 
 void Wheels::Turn_L(unsigned long millisec, int inner, int outer)
 {

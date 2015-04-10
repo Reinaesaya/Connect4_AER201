@@ -43,7 +43,7 @@ Hopper H4(0);
 Hopper hoppers[4] = {H1, H2, H3, H4};
 
 int hopper_order[28]   = {0,0,0,0,3,3,3,3,1,2,1,2,1,2,1,2,0,1,2,3,0,1,2,3,0,1,2,3};
-int dispense_order[28] = {4,4,4,4,4,4,4,4,4,2,2,5,2,6,6,1,7,1,7,1,7,4,3,5,2,6,1,7};
+int dispense_order[28] = {4,5,4,3,3,3,6,4,5,2,2,5,2,6,6,1,7,1,7,1,7,4,3,5,2,6,1,7};
 int dispense_count[7] = {0,0,0,0,0,0,0};
 int num_dispensed = 0;
 int left_up = 1;
@@ -55,10 +55,19 @@ int go = 48;
 void setup() {
   Serial.begin(9600);
   
-  //num_dispensed = get_input_number(MyKeypad);
-  //my_delay(1000);
+//  MyKeypad.setDebounceTime(500);
+//  Serial.println("Enter Number of Balls Dispensed");
+//  num_dispensed = get_input_number(MyKeypad);
+//  Serial.println("Enter Left Hopper Orientation (Flat Up = 0, Flat Down = 1)");
+//  int L_Orient = get_input_number(MyKeypad);
+//  Serial.println("Enter Left Hopper Center Relation (Close = 0, Far = 1)");
+//  int L_Close = get_input_number(MyKeypad);
+//  Serial.println("Enter Right Hopper Orientation (Flat Up = 0, Flat Down = 1)");
+//  int R_Orient = get_input_number(MyKeypad);
+//  Serial.println("Enter Right Hopper Center Relation (Close = 0, Far = 1)");
+//  int R_Close = get_input_number(MyKeypad);
+  Serial.println("Enter Left-Up (1) or Left_Down (0)");
   left_up = get_input_number(MyKeypad);
-  my_delay(1000);
   
   num_dispensed = 0;
   int L_Orient = 0;
@@ -83,11 +92,6 @@ void setup() {
 }
 
 void loop() {
-  //getBallcorner(wheels, stepper);
-  //dispense(num_dispensed, front_ultra, wheels, 75);
-  
-  //wheels.Forward(100);
-  //while (true) {continue;}
     if (first_ball)
     {
       forward_start(left_up, wheels);
